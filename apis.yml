@@ -1,0 +1,78 @@
+name: drillr Public Data API
+description: >-
+  drillr is a financial data and research API for the US, China and Japan. It provides financial statements, full-text
+  filing search, natural-language company discovery, and research signals extracted from filings, news and earnings
+  calls. The same data is served two ways: a REST API for scripts and pipelines, and a hosted MCP server for AI agents,
+  with every reported figure linking back to its source document.
+url: https://raw.githubusercontent.com/api-evangelist/drillr-public-data-api/refs/heads/main/apis.yml
+created: '2026-09-13'
+modified: '2026-09-13'
+specificationVersion: '0.21'
+tags:
+  - financial-data
+  - equities
+  - sec-filings
+  - fundamentals
+  - earnings
+  - ownership
+  - corporate-events
+  - analyst-ratings
+  - news-signals
+  - mcp
+  - agent-native
+apis:
+  - name: drillr REST API
+    description: >-
+      REST API exposing ~29 endpoints across company discovery, filings, signals, events, ownership, executives,
+      financials, earnings, prices and analyst data for US, China and Japan. API-key header auth (X-API-KEY). Returns
+      JSON with source-linked rows.
+    humanURL: https://drillr.ai/docs/api
+    baseURL: https://gateway.drillr.ai/api/v2
+    tags:
+      - financial-data
+      - equities
+      - sec-filings
+      - fundamentals
+      - earnings
+      - ownership
+      - corporate-events
+      - analyst-ratings
+      - news-signals
+      - mcp
+      - agent-native
+    properties:
+      - type: Documentation
+        url: https://drillr.ai/docs/api
+  - name: drillr Data MCP Server
+    description: >-
+      Hosted Streamable HTTP MCP server (drillr-data) exposing the same financial data as ~10 agent-callable tools
+      covering discovery, filings, signals and arbitrary SQL. Browser OAuth auth, no API key needed.
+    humanURL: https://drillr.ai/docs/mcp
+    baseURL: https://gateway.drillr.ai/mcp/data
+    tags:
+      - financial-data
+      - equities
+      - sec-filings
+      - fundamentals
+      - earnings
+      - ownership
+      - corporate-events
+      - analyst-ratings
+      - news-signals
+      - mcp
+      - agent-native
+    properties:
+      - type: MCPServer
+        url: https://gateway.drillr.ai/mcp/data
+      - type: Documentation
+        url: https://drillr.ai/docs/mcp
+      - type: Documentation
+        url: https://drillr.ai/developer/mcp-install.md
+maintainers:
+  - FN: Little-Grebe-Inc
+    url: https://drillr.ai
+generated:
+  by: apis.io/add
+  model: claude-opus-4-8
+  confidence: 90
+  at: '2026-09-13T15:07:24.376Z'
