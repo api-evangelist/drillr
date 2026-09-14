@@ -1,0 +1,37 @@
+generated: '2026-09-14'
+method: searched
+source: https://drillr.ai/changelog
+scheme: dated
+current_spec_revision: 2.0.0-spec.110
+note: >-
+  A reviewed record of user-visible changes. Preview entries are labeled "Staging
+  preview" until they become a production release.
+entries:
+- date: '2026-07-27'
+  status: staging-preview
+  title: Website 2.0 public research surfaces
+  highlights:
+  - Connected public browsing for company research, earnings, discovery, tools and developer resources.
+  - Shared responsive App Shell with company search and consistent navigation.
+  - Public 13F company lookup and SEC filing-list tools.
+  - Shared read-only renderer for precomputed Discover screens.
+  - Unified account access under /account (historic /settings links preserved).
+  breaking: false
+- date: '2026-07-23'
+  status: staging-preview
+  title: Research, earnings and company pages
+  highlights:
+  - Core research pages render public HTML with stable canonical links.
+  - Company overview and data-slice URLs with explicit unavailable states.
+  - Earnings calendar and stored earnings-call summaries published.
+  - Research pagination, filtering, TOC, related links, RSS and metadata.
+  breaking: false
+- date: '2026-05-14'
+  status: released
+  title: One account across Workspace, MCP and REST
+  highlights:
+  - drillr accounts and credits apply across Workspace and programmatic access.
+  - Unified plan names and one credit balance across product surfaces.
+  - API keys and usage reporting inside the same signed-in account.
+  - Developer setup and reference documentation published under /developer.
+  breaking: false

@@ -1,0 +1,60 @@
+generated: '2026-09-14'
+method: searched
+source:
+- https://gateway.drillr.ai/.well-known/oauth-authorization-server
+- https://gateway.drillr.ai/.well-known/oauth-protected-resource
+- https://drillr.ai/docs/api
+- openapi/drillr-openapi.json
+conformance:
+- id: oauth2
+  conforms: true
+  evidence: https://gateway.drillr.ai/.well-known/oauth-authorization-server
+  note: >-
+    OAuth 2.0 authorization_code grant with refresh_token, used by the hosted MCP
+    server. Public client (token_endpoint_auth_methods_supported = none).
+- id: oauth2-pkce
+  conforms: true
+  evidence: https://gateway.drillr.ai/.well-known/oauth-authorization-server
+  note: code_challenge_methods_supported = [S256] (RFC 7636).
+- id: rfc8414-oauth-asm
+  conforms: true
+  evidence: https://gateway.drillr.ai/.well-known/oauth-authorization-server
+  note: OAuth 2.0 Authorization Server Metadata served at the well-known path.
+- id: rfc9728-protected-resource
+  conforms: true
+  evidence: https://gateway.drillr.ai/.well-known/oauth-protected-resource
+  note: OAuth 2.0 Protected Resource Metadata, including an MCP sub-resource document.
+- id: rfc7591-dynamic-client-registration
+  conforms: true
+  evidence: https://gateway.drillr.ai/.well-known/oauth-authorization-server
+  note: registration_endpoint present; MCP clients self-register.
+- id: mcp
+  conforms: true
+  evidence: https://gateway.drillr.ai/mcp/data
+  note: Model Context Protocol over Streamable HTTP; tools/list returns 10 tools.
+- id: openapi-3-1
+  conforms: true
+  evidence: openapi/drillr-openapi.json
+  note: REST contract is OpenAPI 3.1.0.
+- id: oidc
+  conforms: false
+  evidence: https://gateway.drillr.ai/.well-known/openid-configuration
+  note: No OpenID Connect discovery document (404); OAuth is bare, not OIDC.
+- id: rfc9457-problem-json
+  conforms: false
+  evidence: openapi/drillr-openapi.json
+  note: >-
+    Errors use a custom {error, message} envelope, not application/problem+json.
+- id: pagination
+  conforms: partial
+  evidence: https://drillr.ai/docs/api
+  note: >-
+    Paging exists only on endpoints that declare a page parameter (pages start at
+    1; a short page is the last). Many endpoints are unpaginated by design.
+domain_standard: none
+domain_standard_note: >-
+  The financial-data market has no single machine-declarable contract standard the
+  drillr API commits to. Statements are labeled with accounting_standard (US-GAAP
+  etc.) as a data field, and filings are sourced from SEC EDGAR / EDINET / HKEX /
+  CNINFO / DART, but the contract declares no XBRL/FIX/ISO-20022 message shape, so
+  no domain_standard_conformance is asserted (reward-only; not penalized).

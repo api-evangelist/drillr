@@ -1,0 +1,40 @@
+generated: '2026-09-14'
+method: searched
+source: https://drillr.ai/docs/api
+limit_count: 1
+limits:
+- scope: per-key
+  window: 60s
+  limit: 100
+  unit: requests
+  applies_to: REST API (https://gateway.drillr.ai/api/v2)
+  on_exhaustion:
+    http_status: 429
+    error: rate_limit_exceeded
+    body_field: retry_after_seconds
+    billed: false
+  note: >-
+    100 requests per key per minute. On exceed, the request returns 429 with
+    error rate_limit_exceeded and retry_after_seconds in the JSON body. A 429 is
+    not billed.
+response_headers: []
+response_headers_note: >-
+  drillr signals rate limiting in the response BODY (retry_after_seconds), not via
+  X-RateLimit-*/RateLimit-*/Retry-After headers — none are documented.
+credit_metering:
+  note: >-
+    Separate from the request rate limit, drillr meters usage in credits from a
+    single pool shared across Workspace, MCP and REST. Fixed-rate tools: run_sql and
+    filing tools 0.1 credit, news_search 0.2 credit, signal research tools
+    (industry_inflections, ai_adoption) 1 credit each. company_search is usage-based
+    (typically 3-5 credits, exact charge returned in the response). ticker and schema
+    utilities are free. Exhausting credits returns 402 insufficient_credits.
+  daily_caps:
+    company_search:
+      free: 20
+      plus: 100
+      ultra: 500
+    note: >-
+      Company-search daily cap is an abuse guard, not a billing device; past the
+      cap, calls are declined until the day resets and nothing more is charged.
+  source: https://drillr.ai/pricing

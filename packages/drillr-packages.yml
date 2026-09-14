@@ -1,0 +1,30 @@
+generated: '2026-09-14'
+method: searched
+source:
+- https://registry.npmjs.org/drillr-cli
+- https://drillr.ai/pricing
+packages:
+- language: javascript
+  registry: npm
+  name: drillr-cli
+  url: https://www.npmjs.com/package/drillr-cli
+  install: npm install -g drillr-cli
+  bin: drillr
+  version: 0.2.0
+  published: '2026-04-22'
+  official: true
+  note: >-
+    First-party attribution is corroborated but not certain: the npm package
+    description is "Drillr financial research CLI — powered by AI" and drillr's own
+    pricing page names a CLI as one of its surfaces (Terminal, REST API, CLI). The
+    npm metadata carries no repository, homepage or author field, so ownership
+    could not be confirmed from a provider link. Not an SDK/client library — this
+    is a command-line binary; see cli/drillr-cli.yml.
+searched_registries:
+  npm: drillr-cli found (no other first-party lib); no @drillr scope
+  pypi: no drillr package (404)
+  note: >-
+    No first-party client SDK library was found on npm, PyPI, RubyGems, crates.io,
+    Maven, NuGet or Go. drillr's own MCP install page states there is "no package to
+    install" for the MCP server (it is a hosted OAuth endpoint). REST integration is
+    plain HTTP + X-API-KEY with no published wrapper.

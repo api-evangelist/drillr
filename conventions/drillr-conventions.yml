@@ -1,0 +1,61 @@
+generated: '2026-09-14'
+method: searched
+source:
+- https://drillr.ai/docs/api
+- openapi/drillr-openapi.json
+summary: >-
+  Read-only financial-data API. One ticker identifies both the company and its
+  market. JSON in (query params; news-search takes a JSON body), a JSON data array
+  out, newest period first. Every row sourced from a filing links back to that
+  filing.
+auth:
+  style: api-key-header (REST) + browser OAuth (MCP)
+  header: X-API-KEY
+  detail: authentication/drillr-authentication.yml
+identifiers:
+  ticker: >-
+    Single ticker keys both company and market: US bare (AAPL), Japan .T (6758.T),
+    Hong Kong .HK (00700.HK), China A-shares .SH/.SZ (600519.SH), Korea .KS/.KQ
+    (005930.KS). Resolve names via /tickers or /company-discovery.
+dates:
+  format: YYYY-MM-DD
+  ranges: inclusive at both ends
+  note: Some endpoints use a different axis (e.g. reporting month) and say so on their page.
+pagination:
+  style: page-number
+  params: [page, limit]
+  start: 1
+  rule: A page shorter than limit is the last one; paging exists only on endpoints that declare a page parameter.
+  note: Many endpoints are unpaginated by design and return all matching rows.
+filtering:
+  numeric_filters: false
+  note: Endpoints do not filter by amount; fetch rows and filter client-side.
+error_envelope:
+  shape: '{ "error", "message" }'
+  detail: errors/drillr-problem-types.yml
+rate_limit_signaling:
+  mechanism: body field retry_after_seconds on 429
+  detail: rate-limits/drillr-rate-limits.yml
+versioning:
+  scheme: path (/api/v2) + spec revision (2.0.0-spec.110)
+  detail: lifecycle/drillr-lifecycle.yml
+idempotency:
+  coverage: na
+  note: >-
+    Read-only API — every REST operation is a GET except news-search, which is a
+    POST search with no side effects. There is no mutating surface, so replay
+    protection (Idempotency-Key) is not applicable.
+reversibility:
+  status: na
+  note: >-
+    No write, create, delete or state-changing operations exist, so there is
+    nothing to reverse. Reversibility is not applicable to a read-only data API.
+dry_run_mode:
+  status: na
+  note: Not applicable to a read-only API.
+provenance:
+  note: >-
+    Every reported figure links back to its source document (SEC EDGAR, EDINET,
+    HKEX, CNINFO, DART). Statements carry accounting_standard and explicit fiscal
+    calendar fields (period_start, report_period, currency) so the reporting period
+    is stated, not inferred.

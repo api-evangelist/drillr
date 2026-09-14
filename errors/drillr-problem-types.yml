@@ -1,0 +1,51 @@
+generated: '2026-09-14'
+method: searched
+source:
+- https://drillr.ai/docs/api
+- openapi/drillr-openapi.json
+format: custom
+envelope:
+  shape: '{ "error": string, "message": string }'
+  schema: PublicDataError
+  note: >-
+    Not RFC 9457 problem+json. `error` is a stable machine slug; `message` is a
+    human-readable string. Requests fail closed and errors are never billed.
+error_codes:
+- error: bad_request
+  http_status: 400
+  title: Bad request
+  cause: >-
+    Invalid discovery-market value, unknown/invalid parameter, or malformed input.
+  remediation: Correct the parameter; check the endpoint page for allowed values.
+- error: unauthenticated
+  http_status: 401
+  title: Unauthenticated
+  cause: Missing or invalid X-API-KEY (REST) or MCP authorization.
+  remediation: Provide a valid key from https://drillr.ai/account/api-keys, or re-run the MCP OAuth flow.
+- error: insufficient_credits
+  http_status: 402
+  title: Insufficient credits
+  cause: The account's credit balance cannot cover the call.
+  remediation: Top up credits or upgrade the plan (https://drillr.ai/pricing).
+- error: not_found
+  http_status: 404
+  title: Not found
+  cause: Out-of-coverage ticker or a resource that does not exist.
+  remediation: Resolve the ticker with /tickers or /company-discovery; confirm coverage (US, JP, HK, China A-shares, KR).
+- error: rate_limit_exceeded
+  http_status: 429
+  title: Rate limit exceeded
+  cause: More than 100 requests per key per minute.
+  remediation: Back off using retry_after_seconds from the body; a 429 is not billed.
+  extra_fields:
+  - retry_after_seconds
+- error: internal_error
+  http_status: 500
+  title: Internal error
+  cause: Unexpected server-side failure.
+  remediation: Retry with backoff; contact support@lil-grebe.com if persistent.
+- error: service_unavailable
+  http_status: 503
+  title: Service unavailable
+  cause: The service or an upstream dependency is temporarily unavailable.
+  remediation: Retry with backoff.

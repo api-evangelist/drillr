@@ -1,0 +1,32 @@
+generated: '2026-09-14'
+method: searched
+source:
+- https://drillr.ai/docs/api
+- https://drillr.ai/changelog
+- openapi/drillr-openapi.json
+versioning:
+  scheme: url-path + spec-revision
+  current: /api/v2
+  spec_revision: 2.0.0-spec.110
+  note: Major version in the path (v2); a monotonically increasing spec revision (spec.NNN) tracks contract changes.
+changelog:
+  present: true
+  url: https://drillr.ai/changelog
+  detail: changelog/drillr-changelog.yml
+  note: Dated, reviewed record of user-visible changes; preview entries labeled until production release.
+deprecation:
+  policy_published: false
+  sunset_header: false
+  deprecation_header: false
+  deprecated_operations: []
+  note: No deprecation/sunset policy or RFC 8594 headers documented; no operation flagged deprecated in the OpenAPI.
+status_page:
+  public: false
+  note: >-
+    /status redirects to /signin (gated). No public, unauthenticated status page
+    was found, so no StatusPage pointer is emitted.
+sla:
+  published: false
+  note: Dedicated SLA is an Enterprise-tier feature only; no public SLA document.
+data_freshness:
+  note: Market-data prices delayed 15 minutes; source availability and update cadence vary by dataset.

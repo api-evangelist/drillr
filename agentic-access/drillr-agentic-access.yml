@@ -1,0 +1,76 @@
+generated: '2026-09-14'
+method: generated
+source:
+- openapi/drillr-openapi.json
+- mcp/drillr-mcp-tools.json
+- https://drillr.ai/pricing
+summary: >-
+  drillr is a fully read-only data and research API with no mutating operations, so
+  the agentic-access posture is uniform: every operation is a data read.
+  Consequence is bounded to credit spend, not to state change. The MCP tools all
+  declare readOnlyHint=true, destructiveHint=false, openWorldHint=false, confirming
+  a low-consequence agent surface.
+defaults:
+  action_class: read
+  consequence: low
+  reversible: na           # nothing to reverse — no writes
+  escalation: none
+  token: account credential (REST X-API-KEY, or MCP OAuth session)
+  side_effects: none-beyond-credit-spend
+consequence_model:
+  primary: spend
+  detail: >-
+    The only agent-visible consequence is credit consumption from the account's
+    shared pool. Fixed-rate tools cost 0.1-1 credit; company_search/company-discovery
+    is usage-based (typically 3-5 credits, exact charge returned). ticker and schema
+    utilities are free. A 402 insufficient_credits fails closed and is not billed.
+  guidance: >-
+    An agent can call any endpoint safely without confirmation for correctness or
+    safety reasons; the only budgeting concern is credit spend on the metered tools
+    (company_search, signal tools, news_search). Resolve tickers first
+    (ticker_lookup / /tickers) — that step is free and avoids wasted metered calls.
+operation_classes:
+- class: read-free
+  token: account
+  consequence: none
+  operations: [publicDataV2Tickers]
+  mcp_tools: [ticker_lookup, get_table_schema, list_tables]
+- class: read-metered-low
+  token: account
+  consequence: spend (0.1-0.2 credit)
+  operations:
+  - publicDataV2Filings
+  - publicDataV2FilingSearch
+  - publicDataV2CompanyProfile
+  - publicDataV2IncomeStatements
+  - publicDataV2BalanceSheets
+  - publicDataV2CashFlowStatements
+  - publicDataV2FinancialMetricsSnapshot
+  - publicDataV2PricesHistorical
+  - publicDataV2PricesSnapshot
+  - publicDataV2EarningsCalendar
+  - publicDataV2EarningsCallSummary
+  - publicDataV2InsiderTrades
+  - publicDataV2InstitutionalHoldings
+  - publicDataV2Events
+  - publicDataV2EventsFinancings
+  - publicDataV2EventsDeals
+  - publicDataV2EventsExecutiveChanges
+  - publicDataV2EventsCorporateActions
+  - publicDataV2EventsOwnership
+  - publicDataV2AnalystConsensus
+  - publicDataV2AnalystRatings
+  - publicDataV2Executives
+  - publicDataV2ExecutiveCompensation
+  - publicDataV2NewsSearch
+  mcp_tools: [filing_list, filing_search, run_sql, news_search]
+- class: read-metered-usage
+  token: account
+  consequence: spend (usage-based, 3-5 credit typical) + daily cap
+  operations: [publicDataV2CompanyDiscovery, publicDataV2IndustryInflections, publicDataV2EnterpriseAiAdoption]
+  mcp_tools: [company_search, industry_inflections, ai_adoption]
+  note: >-
+    company_search / company-discovery is billed by actual research work and is
+    additionally capped per day (Free 20, Plus 100, Ultra 500) as an abuse guard;
+    past the cap, calls are declined and not charged.
+no_write_surface: true

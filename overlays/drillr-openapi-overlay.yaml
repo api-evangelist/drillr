@@ -1,0 +1,40 @@
+overlay: 1.0.0
+info:
+  title: drillr Public Data API — API Evangelist enrichment overlay
+  version: 1.0.0
+x-provenance:
+  generated: '2026-09-14'
+  method: generated
+  source: openapi/drillr-openapi.json
+  note: >-
+    Non-destructive Overlay 1.0.0 capturing API Evangelist enrichment metadata for
+    the drillr REST contract. Applies to openapi/drillr-openapi.json; never mutates
+    the original. The scorer parses the original spec, so this improves our derived
+    artifacts, not the provider's raw content score.
+extends: ../openapi/drillr-openapi.json
+actions:
+- target: $.info
+  update:
+    x-api-evangelist:
+      rate_limit: 100 requests per key per minute (429 rate_limit_exceeded, retry_after_seconds in body, not billed)
+      credit_metering: single credit pool across Workspace/MCP/REST; 402 insufficient_credits on exhaustion
+      error_envelope: '{ error, message } — errors are bad_request | unauthenticated | insufficient_credits | not_found | rate_limit_exceeded | internal_error | service_unavailable'
+      read_only: true
+      provenance: every filing-sourced row carries accession_number + filing_url
+      companion_surfaces:
+        mcp: https://gateway.drillr.ai/mcp/data
+        artifacts:
+        - authentication/drillr-authentication.yml
+        - errors/drillr-problem-types.yml
+        - rate-limits/drillr-rate-limits.yml
+        - conventions/drillr-conventions.yml
+- target: $.paths['/api/v2/company-discovery'].get
+  update:
+    x-agent-note: >-
+      Natural-language company discovery; the entry point when the ticker is
+      unknown. MCP equivalent: company_search.
+- target: $.paths['/api/v2/filing-search'].get
+  update:
+    x-agent-note: >-
+      Full-text filing search returning as-filed passages with section/form/date.
+      MCP equivalent: filing_search.

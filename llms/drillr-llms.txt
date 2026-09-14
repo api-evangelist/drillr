@@ -1,0 +1,46 @@
+# drillr
+
+> AI-powered investment research platform. Real-time SEC filings, earnings analysis, and alt-data signals across 30+ sources.
+
+drillr provides public financial-research pages and authenticated MCP and REST access. Public pages are intended for discovery and citation; deeper programmatic use should follow the developer documentation and the scope of the caller's account.
+
+## Public routes
+
+- [Discover](https://drillr.ai/ask): Precomputed company screens and their recorded run context.
+- [Companies](https://drillr.ai/company): Ticker-based company directory and public company data pages.
+- [Earnings](https://drillr.ai/earnings): Earnings calendar and stored earnings-call summaries.
+- [Research](https://drillr.ai/research): Published drillr research with stable article URLs and an RSS feed.
+- [Tools](https://drillr.ai/tools): Public 13F company lookup and SEC filing-list tools.
+- [Install drillr MCP](https://drillr.ai/developer/mcp-install.md): Install guide for Codex, Claude Code and other MCP clients.
+- [Developer documentation](https://drillr.ai/docs): MCP and REST setup, authentication, tools, REST endpoints, pricing, rate limits, and error handling.
+- [Methodology](https://drillr.ai/methodology): Coverage, periods, metrics, AI provenance and data limitations.
+- [Benchmark methodology](https://drillr.ai/drillr-benchmark): How the Drillr Benchmark seeds, composes, validates, reviews and scores its questions.
+- [Changelog](https://drillr.ai/changelog): Reviewed user-facing release notes.
+
+## Machine-readable page alternates
+
+- Company HTML: https://drillr.ai/stocks/{TICKER}
+- Company Markdown: https://drillr.ai/company/{TICKER}/markdown
+- Earnings HTML: https://drillr.ai/stocks/{TICKER}/calls/{period}
+- Earnings Markdown: https://drillr.ai/earnings/{TICKER}/{period}/markdown
+- Research RSS: https://drillr.ai/research/feed.xml
+- Sitemap index: https://drillr.ai/sitemap.xml
+
+Placeholders in braces are templates, not literal URLs. Company canonical paths currently use uppercase tickers. Do not infer or enumerate unsupported ticker, period, listing, people or fund pages.
+
+## Canonical API endpoints
+
+- MCP Streamable HTTP: https://gateway.drillr.ai/mcp/data
+- REST base URL: https://gateway.drillr.ai/api/v2
+- REST OpenAPI 3.1 contract: https://gateway.drillr.ai/api/v2/openapi.json (also served at https://drillr.ai/openapi.json)
+- REST API reference: https://drillr.ai/docs/api
+
+MCP uses browser OAuth by default. REST integrations use API keys, created from the user's drillr account after signing in.
+
+## Data and usage notes
+
+- Core company, financial-statement and price-history coverage includes US, Japan, Hong Kong and China A-shares; specialized datasets can be narrower.
+- Public pages can contain stored deterministic data, derived metrics and AI-generated summaries. Verify material claims against the source context when available.
+- Market-data timing, source availability and update cadence vary by dataset.
+- Account, API-key, usage, billing and private session routes are intentionally omitted.
+- drillr content is informational and is not personalized investment advice.

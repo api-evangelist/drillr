@@ -1,0 +1,23 @@
+generated: '2026-09-14'
+method: searched
+source:
+- https://registry.npmjs.org/drillr-cli
+- https://drillr.ai/pricing
+name: drillr
+description: >-
+  Command-line access to drillr financial research, distributed as the npm package
+  drillr-cli (binary `drillr`).
+install:
+- method: npm
+  command: npm install -g drillr-cli
+package: packages/drillr-packages.yml
+version: 0.2.0
+published: '2026-04-22'
+confidence: medium
+attribution_note: >-
+  drillr's pricing page names a CLI as one of the product surfaces ("Terminal, REST
+  API, and CLI") and the npm package drillr-cli is described as "Drillr financial
+  research CLI — powered by AI" with bin `drillr`. First-party ownership is
+  corroborated by name and the provider's own copy, but the npm package publishes no
+  repository, homepage or author, so it could not be verified from a provider link.
+  No command/flag reference is published in the developer docs.

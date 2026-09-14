@@ -1,0 +1,52 @@
+generated: '2026-09-14'
+method: probed
+source: live probes of drillr hosts
+path_echo_control: passed   # /.well-known/<random>.json -> 404 on gateway.drillr.ai
+hosts:
+- host: https://gateway.drillr.ai
+  documents:
+  - path: /.well-known/oauth-authorization-server
+    status: 200
+    file: drillr-oauth-authorization-server.json
+  - path: /.well-known/oauth-protected-resource
+    status: 200
+    file: drillr-oauth-protected-resource.json
+  - path: /.well-known/oauth-protected-resource/mcp/data
+    status: 200
+    file: drillr-oauth-protected-resource-mcp-data.json
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /apis.json
+    status: 404
+  - path: /.well-known/apis.json
+    status: 404
+- host: https://drillr.ai
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404
+  - path: /apis.json
+    status: 307    # redirects to /signin
+notes: >-
+  The gateway serves genuine RFC 8414 (oauth-authorization-server) and RFC 9728
+  (oauth-protected-resource) discovery documents for its MCP OAuth, including a
+  sub-resource document at .../mcp/data. No security.txt, api-catalog, apis.json,
+  OIDC or agent card is served on any host. Negative-control path returned 404, so
+  the gateway is not a path-echoing catch-all.

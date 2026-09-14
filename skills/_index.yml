@@ -1,0 +1,12 @@
+generated: '2026-09-14'
+method: generated
+source: openapi/drillr-openapi.json
+skills:
+- name: drillr-company-financials-lookup
+  file: drillr-company-financials-lookup.md
+  summary: Resolve a company to a ticker and pull recent income, balance-sheet, cash-flow and metric data.
+  operations: [publicDataV2Tickers, publicDataV2CompanyProfile, publicDataV2IncomeStatements, publicDataV2BalanceSheets, publicDataV2CashFlowStatements, publicDataV2FinancialMetricsSnapshot]
+- name: drillr-filing-research
+  file: drillr-filing-research.md
+  summary: List a company's filings and search their full text for a specific disclosure, with news cross-reference.
+  operations: [publicDataV2Tickers, publicDataV2Filings, publicDataV2FilingSearch, publicDataV2NewsSearch]

@@ -1,0 +1,65 @@
+generated: '2026-09-14'
+method: searched
+source: https://drillr.ai/developer/mcp-install.md
+name: drillr-data
+description: >-
+  Hosted Streamable HTTP MCP server exposing drillr's financial-research data as
+  agent-callable tools: ticker resolution, qualitative company search, SEC filing
+  discovery and full-text filing search, cross-source news, research signals
+  (industry inflections, enterprise AI adoption) and arbitrary read-only SQL over
+  the underlying financial, market and alt-data tables. Covers US, Japan, Hong
+  Kong, China A-shares and Korea.
+deployment:
+  mode: remote
+  endpoint: https://gateway.drillr.ai/mcp/data
+  transport: streamable-http
+  auth: oauth
+  verified: probed
+  note: >-
+    Browser OAuth 2.0 by default (no key). tools/list is anonymous (probed 200,
+    live); tool invocation requires an authorized session. OAuth-incapable clients
+    may pass an account key as Authorization: Bearer. There is no package to install
+    and no repository — the provider's own install page states this explicitly.
+oauth:
+  authorization_server: https://gateway.drillr.ai
+  protected_resource: https://gateway.drillr.ai/mcp/data
+  pkce: S256
+  dynamic_client_registration: true
+tools:
+- name: filing_list
+  category: filings
+  description: List indexed SEC filings for a ticker with a summary header (US, JP, China A-shares).
+- name: filing_search
+  category: filings
+  description: Full-text search of one company's filings; returns as-reported facts and matching passages.
+- name: company_search
+  category: discovery
+  description: Qualitative company discovery across industry, business model, supply chain, competitors, management.
+- name: ticker_lookup
+  category: discovery
+  description: Resolve a company name, brand or ticker substring to canonical ticker(s).
+- name: run_sql
+  category: data
+  description: Read-only PostgreSQL SELECT over financial, market and alt-data tables.
+- name: get_table_schema
+  category: data
+  description: Column definitions for a named data table.
+- name: list_tables
+  category: data
+  description: List alt-data tables by category (energy, data centers, semiconductors, compute pricing, models, macro, prediction markets, minerals).
+- name: news_search
+  category: signal
+  description: Cross-source news storylines, events and attributed claims for a company/theme/market.
+- name: industry_inflections
+  category: signal
+  description: Industry inflections synthesized from earnings calls, with mechanism, impact scope and per-company impact.
+- name: ai_adoption
+  category: signal
+  description: Concrete enterprise AI applications disclosed in US earnings calls, with deployment stage and evidence.
+tool_count: 10
+x-evidence:
+  fetched: '2026-09-14'
+  tools_list_url: https://gateway.drillr.ai/mcp/data
+  http_status: 200
+  auth_on_list: anonymous
+  raw: mcp/drillr-mcp-tools.json

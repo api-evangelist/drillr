@@ -1,0 +1,47 @@
+generated: '2026-09-14'
+method: searched
+source: https://drillr.ai/docs/api
+summary:
+  types:
+  - apiKey
+  - oauth2
+  api_key_in:
+  - header
+  note: >-
+    Two surfaces, two auth models. The REST API (gateway.drillr.ai/api/v2) uses a
+    static API key in the X-API-KEY header, created from the signed-in drillr
+    account. The hosted MCP server (gateway.drillr.ai/mcp/data) uses browser OAuth
+    2.0 (authorization_code + PKCE, dynamic client registration, public client) and
+    needs no key; MCP clients without OAuth support may instead pass the same
+    account key as an Authorization: Bearer header.
+schemes:
+- name: ApiKeyAuth
+  type: apiKey
+  in: header
+  parameter: X-API-KEY
+  applies_to: REST API (https://gateway.drillr.ai/api/v2)
+  token_prefix: drl_
+  provisioning: https://drillr.ai/account/api-keys
+  sources:
+  - openapi/drillr-openapi.json
+  - https://drillr.ai/docs/quickstart
+- name: MCP OAuth
+  type: oauth2
+  applies_to: MCP server (https://gateway.drillr.ai/mcp/data)
+  flow: authorization_code
+  pkce: S256
+  dynamic_client_registration: true
+  client_auth: none
+  authorization_endpoint: https://gateway.drillr.ai/oauth/authorize
+  token_endpoint: https://gateway.drillr.ai/oauth/token
+  registration_endpoint: https://gateway.drillr.ai/oauth/register
+  grant_types:
+  - authorization_code
+  - refresh_token
+  bearer_fallback: >-
+    OAuth-incapable MCP clients pass the account key as Authorization: Bearer drl_...
+  sources:
+  - https://gateway.drillr.ai/.well-known/oauth-authorization-server
+  - https://gateway.drillr.ai/.well-known/oauth-protected-resource
+  - https://drillr.ai/developer/mcp-install.md
+docs: https://drillr.ai/docs/api

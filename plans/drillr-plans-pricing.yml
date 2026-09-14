@@ -1,0 +1,70 @@
+generated: '2026-09-14'
+method: searched
+source: https://drillr.ai/pricing
+plan_count: 4
+model: credits
+currency: USD
+note: >-
+  One plan family across Workspace, MCP and REST, sharing a single credit pool.
+  Credits meter usage; purchased top-ups never expire. Included monthly credits on
+  Plus/Ultra reset each billing cycle; the 80 Free credits are one-time and do not
+  expire or refresh.
+plans:
+- name: Free
+  price: 0
+  billing_period: one-time
+  included_credits: 80
+  credits_reset: never
+  company_search_per_day: 20
+  topup_rate_per_credit: 0.15
+  api_keys: unlimited
+  support: none
+  redistribution_license: false
+- name: Plus
+  price: 29
+  billing_period: month
+  price_yearly_note: 17% off annual
+  included_credits: 300
+  credits_reset: monthly
+  company_search_per_day: 100
+  topup_rate_per_credit: 0.12
+  api_keys: unlimited
+  support: community
+  redistribution_license: false
+- name: Ultra
+  price: 99
+  billing_period: month
+  price_yearly_note: 17% off annual
+  included_credits: 1500
+  credits_reset: monthly
+  company_search_per_day: 500
+  topup_rate_per_credit: 0.10
+  api_keys: unlimited
+  support: email
+  redistribution_license: false
+- name: Enterprise
+  price: custom
+  billing_period: custom
+  included_credits: unlimited
+  company_search_per_day: custom
+  topup_rate_per_credit: volume-discount
+  api_keys: unlimited
+  support: dedicated + SLA
+  redistribution_license: true
+  contact: contact@lil-grebe.com
+topups:
+- size: Small
+  credits: 100
+  price_free: 15
+  price_plus: 12
+  price_ultra: 10
+- size: Medium
+  credits: 500
+  price_free: 75
+  price_plus: 60
+  price_ultra: 50
+- size: Large
+  credits: 1000
+  price_free: 150
+  price_plus: 120
+  price_ultra: 100

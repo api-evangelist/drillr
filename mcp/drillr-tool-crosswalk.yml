@@ -1,0 +1,92 @@
+generated: '2026-09-14'
+method: derived
+source:
+- mcp/drillr-mcp-tools.json
+- openapi/drillr-openapi.json
+note: >-
+  The MCP tools and the REST endpoints are overlapping-but-non-identical
+  projections of one data core. Seven MCP tools bind cleanly to a dedicated REST
+  operation. The three data tools (run_sql, get_table_schema, list_tables) have no
+  dedicated REST operation — they expose arbitrary SELECT over the underlying
+  tables (including alt-data tables the REST API does not surface at all). Most
+  REST endpoints (financial statements, prices, ownership, analyst, executives)
+  have no dedicated MCP tool but are reachable through run_sql against the matching
+  table, so they are recorded as rest_only with that note rather than as gaps.
+surfaces:
+  openapi: openapi/drillr-openapi.json
+  mcp: https://gateway.drillr.ai/mcp/data
+  mcp_gated: false   # tools/list anonymous; tool invocation requires an authorized OAuth/bearer session
+crosswalk:
+- tool: ticker_lookup
+  category: discovery
+  rest: [publicDataV2Tickers]
+  binding: name-and-semantics
+  confidence: high
+  note: MCP resolves name/brand/substring; REST /tickers resolves name/code/ISIN/CIK/CUSIP.
+- tool: company_search
+  category: discovery
+  rest: [publicDataV2CompanyDiscovery]
+  binding: name-and-semantics
+  confidence: high
+  note: Both take a natural-language description; MCP adds Korea + market list, REST returns match reason.
+- tool: filing_list
+  category: filings
+  rest: [publicDataV2Filings]
+  binding: name-and-semantics
+  confidence: high
+- tool: filing_search
+  category: filings
+  rest: [publicDataV2FilingSearch]
+  binding: name-and-semantics
+  confidence: high
+- tool: news_search
+  category: signal
+  rest: [publicDataV2NewsSearch]
+  binding: name-and-semantics
+  confidence: high
+- tool: industry_inflections
+  category: signal
+  rest: [publicDataV2IndustryInflections]
+  binding: name-and-semantics
+  confidence: high
+- tool: ai_adoption
+  category: signal
+  rest: [publicDataV2EnterpriseAiAdoption]
+  binding: name-and-semantics
+  confidence: high
+mcp_only:
+- tool: run_sql
+  reason: >-
+    Arbitrary read-only PostgreSQL SELECT over financial, market and alt-data
+    tables (semiconductors, data centers, compute pricing, models, macro/trade,
+    prediction markets, critical minerals). No public REST equivalent; the alt-data
+    tables are not exposed by any REST endpoint.
+- tool: get_table_schema
+  reason: Schema-introspection utility for run_sql; no REST endpoint.
+- tool: list_tables
+  reason: Alt-data table catalog for run_sql; no REST endpoint.
+rest_only:
+- ops: [publicDataV2CompanyProfile]
+  reason: No dedicated MCP tool; reachable via run_sql (company_snapshot) or company_search context.
+- ops: [publicDataV2IncomeStatements, publicDataV2BalanceSheets, publicDataV2CashFlowStatements, publicDataV2FinancialMetricsSnapshot]
+  reason: No dedicated MCP tool; reachable via run_sql on financial_statements / company_snapshot.
+- ops: [publicDataV2PricesHistorical, publicDataV2PricesSnapshot]
+  reason: No dedicated MCP tool; reachable via run_sql on price_volume_history.
+- ops: [publicDataV2EarningsCalendar, publicDataV2EarningsCallSummary]
+  reason: No dedicated MCP tool; reachable via run_sql on earning_call_calendar / earning_call_summary.
+- ops: [publicDataV2InsiderTrades, publicDataV2InstitutionalHoldings]
+  reason: No dedicated MCP tool; reachable via run_sql on insider_and_institution_activities.
+- ops: [publicDataV2Events, publicDataV2EventsFinancings, publicDataV2EventsDeals, publicDataV2EventsExecutiveChanges, publicDataV2EventsCorporateActions, publicDataV2EventsOwnership]
+  reason: No dedicated MCP tool; reachable via run_sql on executive_change / company_deal_events / debt_issuance / securities_offering.
+- ops: [publicDataV2AnalystConsensus, publicDataV2AnalystRatings]
+  reason: No dedicated MCP tool; reachable via run_sql on analyst_ratings / analyst_ratings_consensus.
+- ops: [publicDataV2Executives, publicDataV2ExecutiveCompensation]
+  reason: No dedicated MCP tool; reachable via run_sql on executive_profile / executive_compensation.
+- ops: [getPublicDataV2OpenApi]
+  reason: Contract-download endpoint; no agent tool.
+coverage:
+  mcp_tools: 10
+  rest_operations: 29
+  bound: 7
+  mcp_only: 3
+  rest_only_operation_groups: 9

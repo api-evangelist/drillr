@@ -1,0 +1,91 @@
+generated: '2026-09-14'
+method: derived
+source: openapi/drillr-openapi.json
+summary: >-
+  A ticker-centric hub-and-spoke model. The Company (identified by a
+  market-suffixed ticker) is the hub; every other resource — filings, financial
+  statements, prices, events, ownership, executives, earnings, analyst data and
+  research signals — belongs to a company through its ticker. Filing-sourced rows
+  additionally carry an accession_number + filing_url back to the source document.
+primary_key:
+  field: ticker
+  note: Single ticker keys both the company and its market (US bare, .T, .HK, .SH/.SZ, .KS/.KQ).
+entities:
+- name: Company
+  schema: PublicCompanyProfileItem
+  key: ticker
+  fields: [ticker, market, name, exchange, country, currency, sector, industry, listing_date, website, full_time_employees, identifiers]
+  note: identifiers holds cross-references (ISIN/CIK/CUSIP) resolvable via /tickers.
+- name: Filing
+  schema: PublicFilingsItem
+  key: accession_number
+  fields: [ticker, form_type, filing_date, period_of_report, accession_number, filing_url]
+- name: FilingPassage
+  schema: PublicFilingSearchItem
+  fields: [ticker, form_type, filing_date, language, section, snippet, score]
+- name: FinancialStatement
+  schemas: [PublicIncomeStatementsItem, PublicBalanceSheetsItem, PublicCashFlowStatementsItem, PublicFinancialMetricsSnapshotItem]
+- name: Price
+  schemas: [PublicPricesHistoricalItem, PublicPricesSnapshotItem]
+- name: Event
+  schema: PublicEventsItem
+  key: event_id
+  fields: [event_id, ticker, event_class, event_type, event_date, stage, event_group_id, accession_number, filing_url]
+  subtypes: [PublicEventsFinancingsItem, PublicEventsDealsItem, PublicEventsExecutiveChangesItem, PublicEventsCorporateActionsItem, PublicEventsOwnershipItem]
+- name: Ownership
+  schemas: [PublicInsiderTradesItem, PublicInstitutionalHoldingsItem]
+- name: Executive
+  schemas: [PublicExecutivesItem, PublicExecutiveCompensationItem]
+- name: Earnings
+  schemas: [PublicEarningsCalendarItem, PublicEarningsCallSummaryItem]
+- name: AnalystData
+  schemas: [PublicAnalystConsensusItem, PublicAnalystRatingsItem]
+- name: Signal
+  schemas: [PublicIndustryInflectionsItem, PublicEnterpriseAiAdoptionItem, PublicNewsSearchItem]
+  note: EnterpriseAiAdoption rows carry deployment_id/application_id linking observations of the same application across periods.
+relationships:
+- from: Filing
+  to: Company
+  type: belongs_to
+  via: ticker
+- from: FilingPassage
+  to: Company
+  type: belongs_to
+  via: ticker
+- from: FinancialStatement
+  to: Company
+  type: belongs_to
+  via: ticker
+- from: Price
+  to: Company
+  type: belongs_to
+  via: ticker
+- from: Event
+  to: Company
+  type: belongs_to
+  via: ticker
+- from: Event
+  to: Filing
+  type: references
+  via: accession_number
+- from: Ownership
+  to: Company
+  type: belongs_to
+  via: ticker
+- from: Executive
+  to: Company
+  type: belongs_to
+  via: ticker
+- from: Earnings
+  to: Company
+  type: belongs_to
+  via: ticker
+- from: AnalystData
+  to: Company
+  type: belongs_to
+  via: ticker
+- from: Signal
+  to: Company
+  type: references
+  via: ticker
+  note: Signals (inflections, AI adoption, news) reference one-or-more companies as source or affected tickers.
