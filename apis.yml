@@ -33,85 +33,202 @@ tags_raw:
   - mcp
   - agent-native
 apis:
-  - name: drillr REST API
-    description: >-
-      REST API exposing ~29 endpoints across company discovery, filings, signals, events, ownership, executives,
-      financials, earnings, prices and analyst data for US, China and Japan. API-key header auth (X-API-KEY). Returns
-      JSON with source-linked rows.
-    humanURL: https://drillr.ai/docs/api
-    baseURL: https://gateway.drillr.ai/api/v2
-    tags:
-      - Financial Data
-      - Equities
-      - SEC Filings
-      - Fundamentals
-      - Earnings
-      - Ownership
-      - Corporate Events
-      - Analyst Ratings
-      - news-signals
-      - MCP
-      - agent-native
-    tags_raw:
-      - financial-data
-      - equities
-      - sec-filings
-      - fundamentals
-      - earnings
-      - ownership
-      - corporate-events
-      - analyst-ratings
-      - news-signals
-      - mcp
-      - agent-native
-    properties:
-      - type: OpenAPI
-        url: openapi/drillr-openapi.json
-      - type: Documentation
-        url: https://drillr.ai/docs/api
-      - type: APIReference
-        url: https://drillr.ai/docs/api
-  - name: drillr Data MCP Server
-    description: >-
-      Hosted Streamable HTTP MCP server (drillr-data) exposing the same financial data as ~10 agent-callable tools
-      covering discovery, filings, signals and arbitrary SQL. Browser OAuth auth, no API key needed.
-    humanURL: https://drillr.ai/docs/mcp
-    baseURL: https://gateway.drillr.ai/mcp/data
-    tags:
-      - Financial Data
-      - Equities
-      - SEC Filings
-      - Fundamentals
-      - Earnings
-      - Ownership
-      - Corporate Events
-      - Analyst Ratings
-      - news-signals
-      - MCP
-      - agent-native
-    tags_raw:
-      - financial-data
-      - equities
-      - sec-filings
-      - fundamentals
-      - earnings
-      - ownership
-      - corporate-events
-      - analyst-ratings
-      - news-signals
-      - mcp
-      - agent-native
-    properties:
-      - type: MCPServer
-        url: https://gateway.drillr.ai/mcp/data
-      - type: MCPServer
-        url: mcp/drillr-mcp.yml
-      - type: ToolCrosswalk
-        url: mcp/drillr-tool-crosswalk.yml
-      - type: Documentation
-        url: https://drillr.ai/docs/mcp
-      - type: Documentation
-        url: https://drillr.ai/developer/mcp-install.md
+- name: drillr Data MCP Server
+  description: >-
+    Hosted Streamable HTTP MCP server (drillr-data) exposing the same financial data as ~10 agent-callable
+    tools covering discovery, filings, signals and arbitrary SQL. Browser OAuth auth, no API key needed.
+  humanURL: https://drillr.ai/docs/mcp
+  baseURL: https://gateway.drillr.ai/mcp/data
+  tags:
+  - Financial Data
+  - Equities
+  - SEC Filings
+  - Fundamentals
+  - Earnings
+  - Ownership
+  - Corporate Events
+  - Analyst Ratings
+  - news-signals
+  - MCP
+  - agent-native
+  tags_raw:
+  - financial-data
+  - equities
+  - sec-filings
+  - fundamentals
+  - earnings
+  - ownership
+  - corporate-events
+  - analyst-ratings
+  - news-signals
+  - mcp
+  - agent-native
+  properties:
+  - type: MCPServer
+    url: https://gateway.drillr.ai/mcp/data
+  - type: MCPServer
+    url: mcp/drillr-mcp.yml
+  - type: ToolCrosswalk
+    url: mcp/drillr-tool-crosswalk.yml
+  - type: Documentation
+    url: https://drillr.ai/docs/mcp
+  - type: Documentation
+    url: https://drillr.ai/developer/mcp-install.md
+- aid: drillr:drillr-analyst-api
+  name: drillr Public Data API Analyst API
+  description: Analyst consensus and individual rating events (US only)
+  humanURL: https://drillr.ai/docs/api
+  baseURL: https://gateway.drillr.ai/api/v2
+  tags:
+  - Analyst
+  properties:
+  - type: OpenAPI
+    url: openapi/drillr-analyst-api-openapi.yml
+  - type: Documentation
+    url: https://drillr.ai/docs/api
+  - type: APIReference
+    url: https://drillr.ai/docs/api
+- aid: drillr:drillr-company-api
+  name: drillr Public Data API Company API
+  description: Ticker resolution, natural-language company discovery and company profiles
+  humanURL: https://drillr.ai/docs/api
+  baseURL: https://gateway.drillr.ai/api/v2
+  tags:
+  - Company
+  properties:
+  - type: OpenAPI
+    url: openapi/drillr-company-api-openapi.yml
+  - type: Documentation
+    url: https://drillr.ai/docs/api
+  - type: APIReference
+    url: https://drillr.ai/docs/api
+- aid: drillr:drillr-contract-api
+  name: drillr Public Data API Contract API
+  description: The machine-readable API contract itself
+  humanURL: https://drillr.ai/docs/api
+  baseURL: https://gateway.drillr.ai/api/v2
+  tags:
+  - Contract
+  properties:
+  - type: OpenAPI
+    url: openapi/drillr-contract-api-openapi.yml
+  - type: Documentation
+    url: https://drillr.ai/docs/api
+  - type: APIReference
+    url: https://drillr.ai/docs/api
+- aid: drillr:drillr-earnings-api
+  name: drillr Public Data API Earnings API
+  description: Earnings calendar and structured earnings-call summaries
+  humanURL: https://drillr.ai/docs/api
+  baseURL: https://gateway.drillr.ai/api/v2
+  tags:
+  - Earnings
+  properties:
+  - type: OpenAPI
+    url: openapi/drillr-earnings-api-openapi.yml
+  - type: Documentation
+    url: https://drillr.ai/docs/api
+  - type: APIReference
+    url: https://drillr.ai/docs/api
+- aid: drillr:drillr-events-api
+  name: drillr Public Data API Events API
+  description: >-
+    Corporate events: financings, deals, executive changes, corporate actions, ownership (US only)
+  humanURL: https://drillr.ai/docs/api
+  baseURL: https://gateway.drillr.ai/api/v2
+  tags:
+  - Events
+  properties:
+  - type: OpenAPI
+    url: openapi/drillr-events-api-openapi.yml
+  - type: Documentation
+    url: https://drillr.ai/docs/api
+  - type: APIReference
+    url: https://drillr.ai/docs/api
+- aid: drillr:drillr-executives-api
+  name: drillr Public Data API Executives API
+  description: Executive roster and annual compensation (US only)
+  humanURL: https://drillr.ai/docs/api
+  baseURL: https://gateway.drillr.ai/api/v2
+  tags:
+  - Executives
+  properties:
+  - type: OpenAPI
+    url: openapi/drillr-executives-api-openapi.yml
+  - type: Documentation
+    url: https://drillr.ai/docs/api
+  - type: APIReference
+    url: https://drillr.ai/docs/api
+- aid: drillr:drillr-filings-api
+  name: drillr Public Data API Filings API
+  description: Regulatory filing lists and full-text filing search (US, Japan, China)
+  humanURL: https://drillr.ai/docs/api
+  baseURL: https://gateway.drillr.ai/api/v2
+  tags:
+  - Filings
+  properties:
+  - type: OpenAPI
+    url: openapi/drillr-filings-api-openapi.yml
+  - type: Documentation
+    url: https://drillr.ai/docs/api
+  - type: APIReference
+    url: https://drillr.ai/docs/api
+- aid: drillr:drillr-financials-api
+  name: drillr Public Data API Financials API
+  description: The three financial statements and precomputed financial metrics
+  humanURL: https://drillr.ai/docs/api
+  baseURL: https://gateway.drillr.ai/api/v2
+  tags:
+  - Financials
+  properties:
+  - type: OpenAPI
+    url: openapi/drillr-financials-api-openapi.yml
+  - type: Documentation
+    url: https://drillr.ai/docs/api
+  - type: APIReference
+    url: https://drillr.ai/docs/api
+- aid: drillr:drillr-ownership-api
+  name: drillr Public Data API Ownership API
+  description: Insider holdings and transactions, institutional holdings (US only)
+  humanURL: https://drillr.ai/docs/api
+  baseURL: https://gateway.drillr.ai/api/v2
+  tags:
+  - Ownership
+  properties:
+  - type: OpenAPI
+    url: openapi/drillr-ownership-api-openapi.yml
+  - type: Documentation
+    url: https://drillr.ai/docs/api
+  - type: APIReference
+    url: https://drillr.ai/docs/api
+- aid: drillr:drillr-prices-api
+  name: drillr Public Data API Prices API
+  description: Historical bars and latest closing-price snapshots (US)
+  humanURL: https://drillr.ai/docs/api
+  baseURL: https://gateway.drillr.ai/api/v2
+  tags:
+  - Prices
+  properties:
+  - type: OpenAPI
+    url: openapi/drillr-prices-api-openapi.yml
+  - type: Documentation
+    url: https://drillr.ai/docs/api
+  - type: APIReference
+    url: https://drillr.ai/docs/api
+- aid: drillr:drillr-signal-api
+  name: drillr Public Data API Signal API
+  description: Industry inflections, enterprise AI adoption and cross-source news search
+  humanURL: https://drillr.ai/docs/api
+  baseURL: https://gateway.drillr.ai/api/v2
+  tags:
+  - Signal
+  properties:
+  - type: OpenAPI
+    url: openapi/drillr-signal-api-openapi.yml
+  - type: Documentation
+    url: https://drillr.ai/docs/api
+  - type: APIReference
+    url: https://drillr.ai/docs/api
 maintainers:
   - FN: Little-Grebe-Inc
     email: support@lil-grebe.com
