@@ -10,7 +10,7 @@ modified: '2026-09-14'
 specificationVersion: '0.21'
 tags:
   - Financial Data
-  - Equities
+  - Stocks
   - SEC Filings
   - Fundamentals
   - Earnings
@@ -41,7 +41,7 @@ apis:
   baseURL: https://gateway.drillr.ai/mcp/data
   tags:
   - Financial Data
-  - Equities
+  - Stocks
   - SEC Filings
   - Fundamentals
   - Earnings
@@ -137,6 +137,8 @@ apis:
   humanURL: https://drillr.ai/docs/api
   baseURL: https://gateway.drillr.ai/api/v2
   tags:
+  - Event
+  tags_raw:
   - Events
   properties:
   - type: OpenAPI
@@ -179,6 +181,8 @@ apis:
   humanURL: https://drillr.ai/docs/api
   baseURL: https://gateway.drillr.ai/api/v2
   tags:
+  - Financial
+  tags_raw:
   - Financials
   properties:
   - type: OpenAPI
