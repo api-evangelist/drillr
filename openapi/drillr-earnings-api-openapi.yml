@@ -1,0 +1,346 @@
+openapi: 3.2.0
+info:
+  title: drillr Public Data Earnings API
+  version: 2.0.0-spec.110
+  description: 'REST endpoints over the same tables the drillr app runs on: fundamentals, filings, earnings, ownership, events, executives, analyst data and news for US, Japan and China equities.'
+  termsOfService: https://drillr.ai/legal/terms
+  contact:
+    name: drillr developer support
+    url: https://drillr.ai/docs
+    email: support@lil-grebe.com
+  license:
+    name: drillr Terms of Service
+    url: https://drillr.ai/legal/terms
+  x-logo:
+    url: https://drillr.ai/images/brand/logo_512_optimized.png
+    altText: drillr
+servers:
+- url: https://gateway.drillr.ai
+security:
+- ApiKeyAuth: []
+tags:
+- name: Earnings
+  description: Earnings calendar and structured earnings-call summaries
+paths:
+  /api/v2/earnings-calendar:
+    get:
+      operationId: publicDataV2EarningsCalendar
+      tags:
+      - Earnings
+      summary: Get earnings calendar entries
+      description: 'Returns the earnings calendar for a date range: which company reports on which day, with EPS / revenue estimates and actuals. One row per company per announcement, covering US / CN / JP, queried by announcement date `date`; there is no ticker filter, so filter the returned rows for a single company.
+
+
+        Example request: `GET /api/v2/earnings-calendar?from=2026-03-06&to=2026-06-03&limit=50&page=1`'
+      security:
+      - ApiKeyAuth: []
+      x-credits: 0.02 cr per call
+      x-refresh: hourly
+      parameters:
+      - name: from
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+      - name: to
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 500
+          default: 50
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+      responses:
+        '200':
+          description: Successful Public Data API response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PublicEarningsCalendarItem'
+                required:
+                - data
+                additionalProperties: false
+              example:
+                data:
+                - ticker: NVDA
+                  date: '2026-05-28'
+                  eps_actual: 1.05
+                  eps_estimated: 1.01
+                  revenue_actual: 46743000000
+                  revenue_estimated: 46047000000
+                  last_updated: '2026-05-29'
+        '400':
+          description: Bad request (invalid or unsupported parameter)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '401':
+          description: Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '402':
+          description: Insufficient credits
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '404':
+          description: Ticker not found, market not covered, or dataset not available
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '429':
+          description: Rate limited
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '503':
+          description: Service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+  /api/v2/earnings-call-summary:
+    get:
+      operationId: publicDataV2EarningsCallSummary
+      tags:
+      - Earnings
+      summary: Get earnings-call summaries
+      description: 'Returns a structured summary of an earnings call across five dimensions: management highlights, guidance, risks, segment performance and Q&A topics, plus the title and date, one row per call; the transcript itself is not provided. Locate a call with `ticker` + `fiscal_year` + `period`; a fiscal quarter usually has only one call, so the default `limit=1` is enough.
+
+
+        Example request: `GET /api/v2/earnings-call-summary?ticker=AAPL&fiscal_year=2020&period=Q3`'
+      security:
+      - ApiKeyAuth: []
+      x-credits: 0.02 cr per call
+      x-refresh: transcripts every 10m; summary follows ingestion
+      parameters:
+      - name: ticker
+        in: query
+        required: true
+        style: form
+        explode: false
+        schema:
+          type: array
+          items:
+            type: string
+          minItems: 1
+          maxItems: 1
+      - name: fiscal_year
+        in: query
+        required: true
+        schema:
+          type: integer
+      - name: period
+        in: query
+        required: true
+        style: form
+        explode: false
+        schema:
+          type: array
+          items:
+            type: string
+            enum:
+            - Q1
+            - Q2
+            - Q3
+            - Q4
+            - FY
+          minItems: 1
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 20
+          default: 1
+      responses:
+        '200':
+          description: Successful Public Data API response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PublicEarningsCallSummaryItem'
+                required:
+                - data
+                additionalProperties: false
+              example:
+                data:
+                - ticker: AAPL
+                  fiscal_year: 2020
+                  period: Q3
+                  date: '2020-07-30'
+                  title: Apple FY2020 Q3 earnings call summary
+                  management_highlights: Services and wearables reached record revenue…
+                  guidance: Management did not provide formal quarterly guidance…
+                  risks: COVID-19 continued to create uncertainty…
+                  segment_performance: iPhone revenue increased while Mac and iPad accelerated…
+                  qa_topics: Analysts focused on product demand, margins and capital returns…
+        '400':
+          description: Bad request (invalid or unsupported parameter)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '401':
+          description: Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '402':
+          description: Insufficient credits
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '404':
+          description: Ticker not found, market not covered, or dataset not available
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '429':
+          description: Rate limited
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '503':
+          description: Service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+components:
+  schemas:
+    PublicEarningsCalendarItem:
+      type: object
+      properties:
+        ticker:
+          type: string
+        date:
+          type: string
+          format: date
+        eps_actual:
+          type: number
+        eps_estimated:
+          type: number
+        revenue_actual:
+          type: number
+        revenue_estimated:
+          type: number
+        last_updated:
+          type: string
+          format: date
+      required:
+      - ticker
+      - date
+      - eps_actual
+      - eps_estimated
+      - revenue_actual
+      - revenue_estimated
+      - last_updated
+      additionalProperties: false
+    PublicEarningsCallSummaryItem:
+      type: object
+      properties:
+        ticker:
+          type: string
+        fiscal_year:
+          type: integer
+        period:
+          type: string
+          enum:
+          - Q1
+          - Q2
+          - Q3
+          - Q4
+          - FY
+        date:
+          type: string
+          format: date
+        title:
+          type: string
+        management_highlights:
+          type: string
+        guidance:
+          type: string
+        risks:
+          type: string
+        segment_performance:
+          type: string
+        qa_topics:
+          type: string
+      required:
+      - ticker
+      - fiscal_year
+      - period
+      - date
+      - title
+      - management_highlights
+      - guidance
+      - risks
+      - segment_performance
+      - qa_topics
+      additionalProperties: false
+    PublicDataError:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+      required:
+      - error
+      - message
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-KEY
+externalDocs:
+  description: API reference
+  url: https://drillr.ai/docs/api

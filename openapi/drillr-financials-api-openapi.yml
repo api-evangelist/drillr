@@ -1,0 +1,1654 @@
+openapi: 3.2.0
+info:
+  title: drillr Public Data Financials API
+  version: 2.0.0-spec.110
+  description: 'REST endpoints over the same tables the drillr app runs on: fundamentals, filings, earnings, ownership, events, executives, analyst data and news for US, Japan and China equities.'
+  termsOfService: https://drillr.ai/legal/terms
+  contact:
+    name: drillr developer support
+    url: https://drillr.ai/docs
+    email: support@lil-grebe.com
+  license:
+    name: drillr Terms of Service
+    url: https://drillr.ai/legal/terms
+  x-logo:
+    url: https://drillr.ai/images/brand/logo_512_optimized.png
+    altText: drillr
+servers:
+- url: https://gateway.drillr.ai
+security:
+- ApiKeyAuth: []
+tags:
+- name: Financials
+  description: The three financial statements and precomputed financial metrics
+paths:
+  /api/v2/income-statements:
+    get:
+      operationId: publicDataV2IncomeStatements
+      tags:
+      - Financials
+      summary: Get income statements
+      description: 'Returns a company''s income statement: revenue, costs, profit at each level, earnings per share and more, one row per reporting period. 29 line-item columns in total, plus the 14 meta-data fields shared by the three statements, all listed under Response fields. `ebitda` is a derived column (not an as-reported line). Quarterly amounts may be calculated from cumulative disclosures; earnings per share and weighted average shares cannot be obtained by directly subtracting cumulative figures.
+
+
+        Example request: `GET /api/v2/income-statements?ticker=AAPL&period=FY&limit=5`'
+      security:
+      - ApiKeyAuth: []
+      x-credits: 0.02 cr per call
+      x-refresh: follows filing ingestion; canonical replay weekly
+      parameters:
+      - name: ticker
+        in: query
+        required: true
+        style: form
+        explode: false
+        schema:
+          type: array
+          items:
+            type: string
+          minItems: 1
+          maxItems: 10
+      - name: period
+        in: query
+        required: false
+        style: form
+        explode: false
+        schema:
+          type: array
+          items:
+            type: string
+            enum:
+            - FY
+            - Q1
+            - Q2
+            - Q3
+            - Q4
+          minItems: 1
+          default:
+          - FY
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 40
+          default: 4
+      responses:
+        '200':
+          description: Successful Public Data API response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PublicIncomeStatementsItem'
+                required:
+                - data
+                additionalProperties: false
+              example:
+                data:
+                - ticker: AAPL
+                  market: US
+                  fiscal_year: 2025
+                  period: FY
+                  period_start: '2024-09-29'
+                  report_period: '2025-09-27'
+                  currency: USD
+                  accounting_standard: US-GAAP
+                  accession_number: 0000320193-25-000079
+                  form_type: 10-K
+                  filing_url: https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/0000320193-25-000079.txt
+                  filing_date: '2025-10-31'
+                  derived_fields: []
+                  derivation: {}
+                  revenue: 416161000000
+                  cost_of_revenue: 220960000000
+                  gross_profit: 195201000000
+                  research_and_development_expense: 34550000000
+                  selling_and_marketing_expense: null
+                  general_and_administrative_expense: 8077000000
+                  selling_general_and_administrative_expense: null
+                  taxes_and_surcharges: null
+                  operating_expenses: null
+                  operating_income: 133050000000
+                  interest_income: null
+                  interest_expense: null
+                  other_non_operating_income: null
+                  ordinary_income: null
+                  extraordinary_gains: null
+                  extraordinary_losses: null
+                  pretax_income: 132729000000
+                  income_tax_expense: 20719000000
+                  net_income: null
+                  net_income_attributable_to_parent: 112010000000
+                  net_income_attributable_to_noncontrolling_interests: null
+                  depreciation_and_amortization: null
+                  share_based_compensation: 12863000000
+                  eps_basic: null
+                  eps_diluted: null
+                  dividend_per_share: 1.02
+                  weighted_average_shares_basic: 14948500000
+                  weighted_average_shares_diluted: null
+                  ebitda: null
+        '400':
+          description: Bad request (invalid or unsupported parameter)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '401':
+          description: Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '402':
+          description: Insufficient credits
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '404':
+          description: Ticker not found, market not covered, or dataset not available
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '429':
+          description: Rate limited
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '503':
+          description: Service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+  /api/v2/balance-sheets:
+    get:
+      operationId: publicDataV2BalanceSheets
+      tags:
+      - Financials
+      summary: Get balance sheets
+      description: 'Returns a company''s balance sheet: assets, liabilities, shareholders'' equity and their line items, one row per reporting period as of period end. 41 line-item columns in total, plus the 14 meta-data fields shared by the three statements, all listed under Response fields; `period_start` is always `null`. `total_debt` / `net_debt` are derived columns (not as-reported lines); all other columns are as-reported values.
+
+
+        Example request: `GET /api/v2/balance-sheets?ticker=AAPL&period=FY&limit=3`'
+      security:
+      - ApiKeyAuth: []
+      x-credits: 0.02 cr per call
+      x-refresh: follows filing ingestion; canonical replay weekly
+      parameters:
+      - name: ticker
+        in: query
+        required: true
+        style: form
+        explode: false
+        schema:
+          type: array
+          items:
+            type: string
+          minItems: 1
+          maxItems: 10
+      - name: period
+        in: query
+        required: false
+        style: form
+        explode: false
+        schema:
+          type: array
+          items:
+            type: string
+            enum:
+            - FY
+            - Q1
+            - Q2
+            - Q3
+            - Q4
+          minItems: 1
+          default:
+          - FY
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 40
+          default: 4
+      responses:
+        '200':
+          description: Successful Public Data API response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PublicBalanceSheetsItem'
+                required:
+                - data
+                additionalProperties: false
+              example:
+                data:
+                - ticker: AAPL
+                  market: US
+                  fiscal_year: 2025
+                  period: FY
+                  period_start: null
+                  report_period: '2025-09-27'
+                  currency: USD
+                  accounting_standard: US-GAAP
+                  accession_number: 0000320193-25-000079
+                  form_type: 10-K
+                  filing_url: https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/0000320193-25-000079.txt
+                  filing_date: '2025-10-31'
+                  derived_fields:
+                  - total_equity
+                  derivation:
+                    total_equity:
+                      value: 73733000000
+                      inputs:
+                      - value: 359241000000
+                        metric: total_assets
+                        currency: USD
+                        form_type: 10-K
+                        operation: reported
+                        filing_url: https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/0000320193-25-000079.txt
+                        filing_date: '2025-10-31'
+                        available_at: '2025-10-31'
+                        period_start: null
+                        report_period: '2025-09-27'
+                        accession_number: 0000320193-25-000079
+                      - value: 285508000000
+                        metric: total_liabilities
+                        currency: USD
+                        form_type: 10-K
+                        operation: reported
+                        filing_url: https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/0000320193-25-000079.txt
+                        filing_date: '2025-10-31'
+                        available_at: '2025-10-31'
+                        period_start: null
+                        report_period: '2025-09-27'
+                        accession_number: 0000320193-25-000079
+                      metric: total_equity
+                      currency: USD
+                      operation: minus
+                      available_at: '2025-10-31'
+                      period_start: null
+                      report_period: '2025-09-27'
+                  cash_and_cash_equivalents: 35934000000
+                  short_term_investments: 18763000000
+                  accounts_receivable: null
+                  inventories: 5718000000
+                  prepaid_expenses: null
+                  other_current_assets: null
+                  current_assets: 147957000000
+                  property_plant_equipment: null
+                  right_of_use_assets: 11205000000
+                  goodwill: null
+                  intangible_assets: 13301000000
+                  long_term_investments: null
+                  deferred_tax_assets: null
+                  other_non_current_assets: 83727000000
+                  non_current_assets: null
+                  total_assets: 359241000000
+                  accounts_payable: 69860000000
+                  short_term_debt: null
+                  current_portion_of_long_term_debt: null
+                  employee_compensation_payable: null
+                  income_taxes_payable: 13016000000
+                  accrued_liabilities: null
+                  deferred_revenue: null
+                  other_current_liabilities: null
+                  current_liabilities: 165631000000
+                  long_term_debt: null
+                  lease_liabilities: 692000000
+                  deferred_tax_liabilities: 19980000000
+                  other_non_current_liabilities: null
+                  non_current_liabilities: null
+                  total_liabilities: 285508000000
+                  common_stock: 93568000000
+                  additional_paid_in_capital: null
+                  retained_earnings: -14264000000
+                  treasury_stock: null
+                  accumulated_other_comprehensive_income: null
+                  equity_attributable_to_parent: 73733000000
+                  noncontrolling_interests: null
+                  total_equity: 73733000000
+                  temporary_equity: null
+                  total_debt: null
+                  net_debt: null
+        '400':
+          description: Bad request (invalid or unsupported parameter)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '401':
+          description: Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '402':
+          description: Insufficient credits
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '404':
+          description: Ticker not found, market not covered, or dataset not available
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '429':
+          description: Rate limited
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '503':
+          description: Service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+  /api/v2/cash-flow-statements:
+    get:
+      operationId: publicDataV2CashFlowStatements
+      tags:
+      - Financials
+      summary: Get cash-flow statements
+      description: 'Returns a company''s cash flow statement: operating, investing and financing cash flows plus free cash flow, one row per reporting period. 16 line-item columns in total, plus the 14 meta-data fields shared by the three statements, all listed under Response fields. Signs follow the statement direction: outflows such as capital expenditures, buybacks and dividends are negative, inflows such as investment proceeds are positive. `free_cash_flow` is a derived column (not an as-reported line). Quarterly cash flows may be calculated from cumulative disclosures; half-year or full-year cumulative amounts are not returned as single-quarter amounts.
+
+
+        Example request: `GET /api/v2/cash-flow-statements?ticker=AAPL&period=FY&limit=3`'
+      security:
+      - ApiKeyAuth: []
+      x-credits: 0.02 cr per call
+      x-refresh: follows filing ingestion; canonical replay weekly
+      parameters:
+      - name: ticker
+        in: query
+        required: true
+        style: form
+        explode: false
+        schema:
+          type: array
+          items:
+            type: string
+          minItems: 1
+          maxItems: 10
+      - name: period
+        in: query
+        required: false
+        style: form
+        explode: false
+        schema:
+          type: array
+          items:
+            type: string
+            enum:
+            - FY
+            - Q1
+            - Q2
+            - Q3
+            - Q4
+          minItems: 1
+          default:
+          - FY
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 40
+          default: 4
+      responses:
+        '200':
+          description: Successful Public Data API response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PublicCashFlowStatementsItem'
+                required:
+                - data
+                additionalProperties: false
+              example:
+                data:
+                - ticker: AAPL
+                  market: US
+                  fiscal_year: 2025
+                  period: FY
+                  period_start: '2024-09-29'
+                  report_period: '2025-09-27'
+                  currency: USD
+                  accounting_standard: US-GAAP
+                  accession_number: 0000320193-25-000079
+                  form_type: 10-K
+                  filing_url: https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/0000320193-25-000079.txt
+                  filing_date: '2025-10-31'
+                  derived_fields:
+                  - investing_cash_flow
+                  - dividends_paid
+                  - cash_at_end_of_period
+                  - income_taxes_paid
+                  derivation:
+                    dividends_paid:
+                      value: -15421000000
+                      inputs:
+                      - value: 15421000000
+                        metric: dividends_paid
+                        currency: USD
+                        form_type: 10-K
+                        operation: reported
+                        filing_url: https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/0000320193-25-000079.txt
+                        filing_date: '2025-10-31'
+                        available_at: '2025-10-31'
+                        period_start: '2024-09-29'
+                        report_period: '2025-09-27'
+                        accession_number: 0000320193-25-000079
+                      metric: dividends_paid
+                      currency: USD
+                      operation: negative_absolute
+                      available_at: '2025-10-31'
+                      period_start: '2024-09-29'
+                      report_period: '2025-09-27'
+                    income_taxes_paid:
+                      value: -43369000000
+                      inputs:
+                      - value: 43369000000
+                        metric: income_taxes_paid
+                        currency: USD
+                        form_type: 10-K
+                        operation: reported
+                        filing_url: https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/0000320193-25-000079.txt
+                        filing_date: '2025-10-31'
+                        available_at: '2025-10-31'
+                        period_start: '2024-09-29'
+                        report_period: '2025-09-27'
+                        accession_number: 0000320193-25-000079
+                      metric: income_taxes_paid
+                      currency: USD
+                      operation: negative_absolute
+                      available_at: '2025-10-31'
+                      period_start: '2024-09-29'
+                      report_period: '2025-09-27'
+                    investing_cash_flow:
+                      value: 15195000000
+                      inputs:
+                      - value: 15195000000
+                        metric: net_cash_used_for_investing_activities
+                        currency: USD
+                        form_type: 10-K
+                        operation: reported
+                        filing_url: https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/0000320193-25-000079.txt
+                        filing_date: '2025-10-31'
+                        available_at: '2025-10-31'
+                        period_start: '2024-09-29'
+                        report_period: '2025-09-27'
+                        accession_number: 0000320193-25-000079
+                      metric: investing_cash_flow
+                      currency: USD
+                      operation: col
+                      available_at: '2025-10-31'
+                      period_start: '2024-09-29'
+                      report_period: '2025-09-27'
+                    cash_at_end_of_period:
+                      value: 35934000000
+                      inputs:
+                      - value: 35934000000
+                        metric: cash_and_cash_equivalents
+                        currency: USD
+                        form_type: 10-K
+                        operation: reported
+                        filing_url: https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/0000320193-25-000079.txt
+                        filing_date: '2025-10-31'
+                        available_at: '2025-10-31'
+                        period_start: null
+                        report_period: '2025-09-27'
+                        accession_number: 0000320193-25-000079
+                      metric: cash_at_end_of_period
+                      currency: USD
+                      operation: col
+                      available_at: '2025-10-31'
+                      period_start: '2024-09-29'
+                      report_period: '2025-09-27'
+                  operating_cash_flow: 111482000000
+                  change_in_working_capital: null
+                  capital_expenditures: null
+                  acquisitions_net: null
+                  purchases_of_investments: null
+                  proceeds_from_investments: null
+                  investing_cash_flow: 15195000000
+                  share_repurchases: null
+                  dividends_paid: -15421000000
+                  financing_cash_flow: -120686000000
+                  effect_of_exchange_rate_on_cash: null
+                  net_change_in_cash: 5991000000
+                  cash_at_end_of_period: 35934000000
+                  income_taxes_paid: -43369000000
+                  interest_paid: null
+                  free_cash_flow: null
+        '400':
+          description: Bad request (invalid or unsupported parameter)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '401':
+          description: Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '402':
+          description: Insufficient credits
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '404':
+          description: Ticker not found, market not covered, or dataset not available
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '429':
+          description: Rate limited
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '503':
+          description: Service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+  /api/v2/financial-metrics-snapshot:
+    get:
+      operationId: publicDataV2FinancialMetricsSnapshot
+      tags:
+      - Financials
+      summary: Get current financial metrics
+      description: 'Returns a company''s precomputed valuation and financial ratios: market cap, enterprise value, TTM valuation multiples, margins, returns, growth rates, leverage and liquidity ratios, and dividend metrics, one row per ticker as of the latest snapshot date. Ratios are always decimals (`0.25` = 25%), not percentages; monetary fields are in `currency` (the trading currency), and `market_capitalization_usd` is additionally converted to USD at the snapshot-date rate.
+
+
+        Example request: `GET /api/v2/financial-metrics-snapshot?ticker=AAPL`'
+      security:
+      - ApiKeyAuth: []
+      x-credits: 0.02 cr per call
+      x-refresh: weekdays at 16:00 UTC
+      parameters:
+      - name: ticker
+        in: query
+        required: true
+        style: form
+        explode: false
+        schema:
+          type: array
+          items:
+            type: string
+          minItems: 1
+          maxItems: 50
+      responses:
+        '200':
+          description: Successful Public Data API response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PublicFinancialMetricsSnapshotItem'
+                required:
+                - data
+                additionalProperties: false
+              example:
+                data:
+                - ticker: AAPL
+                  market: US
+                  currency: USD
+                  shares_outstanding: 14780000000
+                  market_capitalization: 3421000000000
+                  market_capitalization_usd: 3421000000000
+                  enterprise_value: 3480000000000
+                  pe_ratio_ttm: 34.2
+                  peg_ratio_ttm: 2.9
+                  pb_ratio_ttm: 47.1
+                  ps_ratio_ttm: 8.5
+                  pcf_ratio_ttm: 28
+                  ev_to_sales_ttm: 8.7
+                  ev_to_ebitda_ttm: 26.3
+                  ev_to_ebit_ttm: 28.1
+                  gross_profit_margin_ttm: 0.463
+                  ebitda_margin_ttm: 0.334
+                  net_income_margin_ttm: 0.253
+                  fcf_margin_ttm: 0.27
+                  roe_ttm: 1.472
+                  roa_ttm: 0.29
+                  roic_ttm: 0.58
+                  revenue_growth_ttm: 0.061
+                  eps_growth_ttm: 0.083
+                  fcf_growth_ttm: 0.05
+                  revenue_cagr_3y: 0.04
+                  eps_cagr_3y: 0.09
+                  dividend_yield_ttm: 0.0042
+                  payout_ratio_ttm: 0.15
+                  dividend_growth_1y: 0.04
+                  consecutive_dividend_years: 13
+                  debt_to_equity: 1.45
+                  net_debt_to_equity: 0.24
+                  debt_to_assets: 0.29
+                  debt_to_ebitda: 0.62
+                  net_debt_to_ebitda: 0.1
+                  interest_coverage: 38.6
+                  ebitda_to_interest: 44.2
+                  current_ratio: 1.07
+                  quick_ratio: 1.02
+                  cash_ratio: 0.51
+                  working_capital: 9473000000
+                  operating_cash_flow_ratio: 0.89
+                  fcf_to_debt: 1.38
+                  ocf_to_debt: 1.54
+                  ebit_margin_ttm: 0.318
+                  capex_to_sales_ttm: 0.029
+                  asset_turnover_ttm: 1.19
+                  cash_per_share_ttm: 4.69
+                  ebitda_growth_ttm: 0.072
+                  ebit_growth_ttm: 0.059
+                  ocf_growth_ttm: 0.081
+                  ebitda_cagr_3y: 0.05
+                  ebit_cagr_3y: 0.04
+                  net_income_cagr_3y: 0.06
+                  fcf_cagr_3y: 0.03
+                  book_value_cagr_3y: -0.08
+                  total_assets_cagr_3y: 0.01
+                  dividend_rate_ttm: 1.04
+                  fcf_payout_ratio_ttm: 0.077
+                  dividend_cagr_3y: 0.042
+                  dividend_frequency: Quarterly
+                  price_date: '2026-09-08'
+                  statement_period_end: '2026-06-27'
+                  statement_period: Q3
+        '400':
+          description: Bad request (invalid or unsupported parameter)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '401':
+          description: Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '402':
+          description: Insufficient credits
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '404':
+          description: Ticker not found, market not covered, or dataset not available
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '429':
+          description: Rate limited
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '503':
+          description: Service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+components:
+  schemas:
+    PublicFinancialMetricsSnapshotItem:
+      type: object
+      properties:
+        ticker:
+          type: string
+        market:
+          type: string
+          enum:
+          - US
+          - CN
+          - JP
+        currency:
+          type: string
+        shares_outstanding:
+          type: number
+        market_capitalization:
+          type: number
+        market_capitalization_usd:
+          type: number
+        enterprise_value:
+          type: number
+        pe_ratio_ttm:
+          type: number
+        peg_ratio_ttm:
+          type: number
+        pb_ratio_ttm:
+          type: number
+        ps_ratio_ttm:
+          type: number
+        pcf_ratio_ttm:
+          type: number
+        ev_to_sales_ttm:
+          type: number
+        ev_to_ebitda_ttm:
+          type: number
+        ev_to_ebit_ttm:
+          type: number
+        gross_profit_margin_ttm:
+          type: number
+        ebitda_margin_ttm:
+          type: number
+        net_income_margin_ttm:
+          type: number
+        fcf_margin_ttm:
+          type: number
+        roe_ttm:
+          type: number
+        roa_ttm:
+          type: number
+        roic_ttm:
+          type: number
+        revenue_growth_ttm:
+          type: number
+        eps_growth_ttm:
+          type: number
+        fcf_growth_ttm:
+          type: number
+        revenue_cagr_3y:
+          type: number
+        eps_cagr_3y:
+          type: number
+        dividend_yield_ttm:
+          type: number
+        payout_ratio_ttm:
+          type: number
+        dividend_growth_1y:
+          type: number
+        consecutive_dividend_years:
+          type: number
+        debt_to_equity:
+          type: number
+        net_debt_to_equity:
+          type: number
+        debt_to_assets:
+          type: number
+        debt_to_ebitda:
+          type: number
+        net_debt_to_ebitda:
+          type: number
+        interest_coverage:
+          type: number
+        ebitda_to_interest:
+          type: number
+        current_ratio:
+          type: number
+        quick_ratio:
+          type: number
+        cash_ratio:
+          type: number
+        working_capital:
+          type: number
+        operating_cash_flow_ratio:
+          type: number
+        fcf_to_debt:
+          type: number
+        ocf_to_debt:
+          type: number
+        ebit_margin_ttm:
+          type: number
+        capex_to_sales_ttm:
+          type: number
+        asset_turnover_ttm:
+          type: number
+        cash_per_share_ttm:
+          type: number
+        ebitda_growth_ttm:
+          type: number
+        ebit_growth_ttm:
+          type: number
+        ocf_growth_ttm:
+          type: number
+        ebitda_cagr_3y:
+          type: number
+        ebit_cagr_3y:
+          type: number
+        net_income_cagr_3y:
+          type: number
+        fcf_cagr_3y:
+          type: number
+        book_value_cagr_3y:
+          type: number
+        total_assets_cagr_3y:
+          type: number
+        dividend_rate_ttm:
+          type: number
+        fcf_payout_ratio_ttm:
+          type: number
+        dividend_cagr_3y:
+          type: number
+        dividend_frequency:
+          type: string
+        price_date:
+          type: string
+          format: date
+        statement_period_end:
+          type: string
+        statement_period:
+          type: string
+      required:
+      - ticker
+      - market
+      - currency
+      - shares_outstanding
+      - market_capitalization
+      - market_capitalization_usd
+      - enterprise_value
+      - pe_ratio_ttm
+      - peg_ratio_ttm
+      - pb_ratio_ttm
+      - ps_ratio_ttm
+      - pcf_ratio_ttm
+      - ev_to_sales_ttm
+      - ev_to_ebitda_ttm
+      - ev_to_ebit_ttm
+      - gross_profit_margin_ttm
+      - ebitda_margin_ttm
+      - net_income_margin_ttm
+      - fcf_margin_ttm
+      - roe_ttm
+      - roa_ttm
+      - roic_ttm
+      - revenue_growth_ttm
+      - eps_growth_ttm
+      - fcf_growth_ttm
+      - revenue_cagr_3y
+      - eps_cagr_3y
+      - dividend_yield_ttm
+      - payout_ratio_ttm
+      - dividend_growth_1y
+      - consecutive_dividend_years
+      - debt_to_equity
+      - net_debt_to_equity
+      - debt_to_assets
+      - debt_to_ebitda
+      - net_debt_to_ebitda
+      - interest_coverage
+      - ebitda_to_interest
+      - current_ratio
+      - quick_ratio
+      - cash_ratio
+      - working_capital
+      - operating_cash_flow_ratio
+      - fcf_to_debt
+      - ocf_to_debt
+      - ebit_margin_ttm
+      - capex_to_sales_ttm
+      - asset_turnover_ttm
+      - cash_per_share_ttm
+      - ebitda_growth_ttm
+      - ebit_growth_ttm
+      - ocf_growth_ttm
+      - ebitda_cagr_3y
+      - ebit_cagr_3y
+      - net_income_cagr_3y
+      - fcf_cagr_3y
+      - book_value_cagr_3y
+      - total_assets_cagr_3y
+      - dividend_rate_ttm
+      - fcf_payout_ratio_ttm
+      - dividend_cagr_3y
+      - dividend_frequency
+      - price_date
+      - statement_period_end
+      - statement_period
+      additionalProperties: false
+    PublicCashFlowStatementsItem:
+      type: object
+      properties:
+        ticker:
+          type: string
+        market:
+          type: string
+          enum:
+          - US
+          - CN
+          - JP
+        fiscal_year:
+          type: integer
+        period:
+          type: string
+          enum:
+          - FY
+          - Q1
+          - Q2
+          - Q3
+          - Q4
+        period_start:
+          type: string
+          format: date
+        report_period:
+          type: string
+          format: date
+        currency:
+          type: string
+        accounting_standard:
+          type: string
+        accession_number:
+          type: string
+        form_type:
+          type: string
+        filing_url:
+          type: string
+          format: uri
+        filing_date:
+          type: string
+          format: date
+        derived_fields:
+          type: array
+          items:
+            type: string
+        derivation:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/StatementCalculationNode'
+        operating_cash_flow:
+          type: number
+        change_in_working_capital:
+          anyOf:
+          - type: number
+          - type: 'null'
+        capital_expenditures:
+          anyOf:
+          - type: number
+          - type: 'null'
+        acquisitions_net:
+          anyOf:
+          - type: number
+          - type: 'null'
+        purchases_of_investments:
+          anyOf:
+          - type: number
+          - type: 'null'
+        proceeds_from_investments:
+          anyOf:
+          - type: number
+          - type: 'null'
+        investing_cash_flow:
+          type: number
+        share_repurchases:
+          anyOf:
+          - type: number
+          - type: 'null'
+        dividends_paid:
+          type: number
+        financing_cash_flow:
+          type: number
+        effect_of_exchange_rate_on_cash:
+          anyOf:
+          - type: number
+          - type: 'null'
+        net_change_in_cash:
+          type: number
+        cash_at_end_of_period:
+          type: number
+        income_taxes_paid:
+          type: number
+        interest_paid:
+          anyOf:
+          - type: number
+          - type: 'null'
+        free_cash_flow:
+          anyOf:
+          - type: number
+          - type: 'null'
+      required:
+      - ticker
+      - market
+      - fiscal_year
+      - period
+      - period_start
+      - report_period
+      - currency
+      - accounting_standard
+      - accession_number
+      - form_type
+      - filing_url
+      - filing_date
+      - derived_fields
+      - derivation
+      - operating_cash_flow
+      - change_in_working_capital
+      - capital_expenditures
+      - acquisitions_net
+      - purchases_of_investments
+      - proceeds_from_investments
+      - investing_cash_flow
+      - share_repurchases
+      - dividends_paid
+      - financing_cash_flow
+      - effect_of_exchange_rate_on_cash
+      - net_change_in_cash
+      - cash_at_end_of_period
+      - income_taxes_paid
+      - interest_paid
+      - free_cash_flow
+      additionalProperties: false
+    PublicBalanceSheetsItem:
+      type: object
+      properties:
+        ticker:
+          type: string
+        market:
+          type: string
+          enum:
+          - US
+          - CN
+          - JP
+        fiscal_year:
+          type: integer
+        period:
+          type: string
+          enum:
+          - FY
+          - Q1
+          - Q2
+          - Q3
+          - Q4
+        period_start:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+        report_period:
+          type: string
+          format: date
+        currency:
+          type: string
+        accounting_standard:
+          type: string
+        accession_number:
+          type: string
+        form_type:
+          type: string
+        filing_url:
+          type: string
+          format: uri
+        filing_date:
+          type: string
+          format: date
+        derived_fields:
+          type: array
+          items:
+            type: string
+        derivation:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/StatementCalculationNode'
+        cash_and_cash_equivalents:
+          type: number
+        short_term_investments:
+          type: number
+        accounts_receivable:
+          anyOf:
+          - type: number
+          - type: 'null'
+        inventories:
+          type: number
+        prepaid_expenses:
+          anyOf:
+          - type: number
+          - type: 'null'
+        other_current_assets:
+          anyOf:
+          - type: number
+          - type: 'null'
+        current_assets:
+          type: number
+        property_plant_equipment:
+          anyOf:
+          - type: number
+          - type: 'null'
+        right_of_use_assets:
+          type: number
+        goodwill:
+          anyOf:
+          - type: number
+          - type: 'null'
+        intangible_assets:
+          type: number
+        long_term_investments:
+          anyOf:
+          - type: number
+          - type: 'null'
+        deferred_tax_assets:
+          anyOf:
+          - type: number
+          - type: 'null'
+        other_non_current_assets:
+          type: number
+        non_current_assets:
+          anyOf:
+          - type: number
+          - type: 'null'
+        total_assets:
+          type: number
+        accounts_payable:
+          type: number
+        short_term_debt:
+          anyOf:
+          - type: number
+          - type: 'null'
+        current_portion_of_long_term_debt:
+          anyOf:
+          - type: number
+          - type: 'null'
+        employee_compensation_payable:
+          anyOf:
+          - type: number
+          - type: 'null'
+        income_taxes_payable:
+          type: number
+        accrued_liabilities:
+          anyOf:
+          - type: number
+          - type: 'null'
+        deferred_revenue:
+          anyOf:
+          - type: number
+          - type: 'null'
+        other_current_liabilities:
+          anyOf:
+          - type: number
+          - type: 'null'
+        current_liabilities:
+          type: number
+        long_term_debt:
+          anyOf:
+          - type: number
+          - type: 'null'
+        lease_liabilities:
+          type: number
+        deferred_tax_liabilities:
+          type: number
+        other_non_current_liabilities:
+          anyOf:
+          - type: number
+          - type: 'null'
+        non_current_liabilities:
+          anyOf:
+          - type: number
+          - type: 'null'
+        total_liabilities:
+          type: number
+        common_stock:
+          type: number
+        additional_paid_in_capital:
+          anyOf:
+          - type: number
+          - type: 'null'
+        retained_earnings:
+          type: number
+        treasury_stock:
+          anyOf:
+          - type: number
+          - type: 'null'
+        accumulated_other_comprehensive_income:
+          anyOf:
+          - type: number
+          - type: 'null'
+        equity_attributable_to_parent:
+          type: number
+        noncontrolling_interests:
+          anyOf:
+          - type: number
+          - type: 'null'
+        total_equity:
+          type: number
+        temporary_equity:
+          anyOf:
+          - type: number
+          - type: 'null'
+        total_debt:
+          anyOf:
+          - type: number
+          - type: 'null'
+        net_debt:
+          anyOf:
+          - type: number
+          - type: 'null'
+      required:
+      - ticker
+      - market
+      - fiscal_year
+      - period
+      - period_start
+      - report_period
+      - currency
+      - accounting_standard
+      - accession_number
+      - form_type
+      - filing_url
+      - filing_date
+      - derived_fields
+      - derivation
+      - cash_and_cash_equivalents
+      - short_term_investments
+      - accounts_receivable
+      - inventories
+      - prepaid_expenses
+      - other_current_assets
+      - current_assets
+      - property_plant_equipment
+      - right_of_use_assets
+      - goodwill
+      - intangible_assets
+      - long_term_investments
+      - deferred_tax_assets
+      - other_non_current_assets
+      - non_current_assets
+      - total_assets
+      - accounts_payable
+      - short_term_debt
+      - current_portion_of_long_term_debt
+      - employee_compensation_payable
+      - income_taxes_payable
+      - accrued_liabilities
+      - deferred_revenue
+      - other_current_liabilities
+      - current_liabilities
+      - long_term_debt
+      - lease_liabilities
+      - deferred_tax_liabilities
+      - other_non_current_liabilities
+      - non_current_liabilities
+      - total_liabilities
+      - common_stock
+      - additional_paid_in_capital
+      - retained_earnings
+      - treasury_stock
+      - accumulated_other_comprehensive_income
+      - equity_attributable_to_parent
+      - noncontrolling_interests
+      - total_equity
+      - temporary_equity
+      - total_debt
+      - net_debt
+      additionalProperties: false
+    StatementCalculationNode:
+      oneOf:
+      - type: object
+        properties:
+          operation:
+            const: reported
+          metric:
+            type: string
+          value:
+            type: number
+          currency:
+            type:
+            - string
+            - 'null'
+          period_start:
+            type:
+            - string
+            - 'null'
+            format: date
+          report_period:
+            type:
+            - string
+            - 'null'
+            format: date
+          available_at:
+            type:
+            - string
+            - 'null'
+            format: date
+          accession_number:
+            type:
+            - string
+            - 'null'
+          form_type:
+            type:
+            - string
+            - 'null'
+          filing_url:
+            type: string
+            format: uri
+          filing_date:
+            type:
+            - string
+            - 'null'
+            format: date
+        required:
+        - operation
+        - metric
+        - value
+        - currency
+        - period_start
+        - report_period
+        - available_at
+        - accession_number
+        - form_type
+        - filing_url
+        - filing_date
+        additionalProperties: false
+      - type: object
+        properties:
+          operation:
+            type: string
+            enum:
+            - plus
+            - minus
+            - plus0
+            - minus0
+            - plus_minus
+            - confirm_minus2
+            - minus_same_vintage
+            - col
+            - col_if_null
+            - subtract
+            - annual_minus_three_quarters
+            - same_end_balance
+            - previous_end_cash
+            - negative_absolute
+            - negate
+          metric:
+            type: string
+          value:
+            type: number
+          currency:
+            type:
+            - string
+            - 'null'
+          period_start:
+            type:
+            - string
+            - 'null'
+            format: date
+          report_period:
+            type:
+            - string
+            - 'null'
+            format: date
+          available_at:
+            type:
+            - string
+            - 'null'
+            format: date
+          inputs:
+            type: array
+            minItems: 1
+            maxItems: 4
+            items:
+              anyOf:
+              - $ref: '#/components/schemas/StatementCalculationNode'
+              - type: 'null'
+        required:
+        - operation
+        - metric
+        - value
+        - currency
+        - period_start
+        - report_period
+        - available_at
+        - inputs
+        additionalProperties: false
+    PublicDataError:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+      required:
+      - error
+      - message
+    PublicIncomeStatementsItem:
+      type: object
+      properties:
+        ticker:
+          type: string
+        market:
+          type: string
+          enum:
+          - US
+          - CN
+          - JP
+        fiscal_year:
+          type: integer
+        period:
+          type: string
+          enum:
+          - FY
+          - Q1
+          - Q2
+          - Q3
+          - Q4
+        period_start:
+          type: string
+          format: date
+        report_period:
+          type: string
+          format: date
+        currency:
+          type: string
+        accounting_standard:
+          type: string
+        accession_number:
+          type: string
+        form_type:
+          type: string
+        filing_url:
+          type: string
+          format: uri
+        filing_date:
+          type: string
+          format: date
+        derived_fields:
+          type: array
+          items:
+            type: string
+        derivation:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/StatementCalculationNode'
+        revenue:
+          type: number
+        cost_of_revenue:
+          type: number
+        gross_profit:
+          type: number
+        research_and_development_expense:
+          type: number
+        selling_and_marketing_expense:
+          anyOf:
+          - type: number
+          - type: 'null'
+        general_and_administrative_expense:
+          type: number
+        selling_general_and_administrative_expense:
+          anyOf:
+          - type: number
+          - type: 'null'
+        taxes_and_surcharges:
+          anyOf:
+          - type: number
+          - type: 'null'
+        operating_expenses:
+          anyOf:
+          - type: number
+          - type: 'null'
+        operating_income:
+          type: number
+        interest_income:
+          anyOf:
+          - type: number
+          - type: 'null'
+        interest_expense:
+          anyOf:
+          - type: number
+          - type: 'null'
+        other_non_operating_income:
+          anyOf:
+          - type: number
+          - type: 'null'
+        ordinary_income:
+          anyOf:
+          - type: number
+          - type: 'null'
+        extraordinary_gains:
+          anyOf:
+          - type: number
+          - type: 'null'
+        extraordinary_losses:
+          anyOf:
+          - type: number
+          - type: 'null'
+        pretax_income:
+          type: number
+        income_tax_expense:
+          type: number
+        net_income:
+          anyOf:
+          - type: number
+          - type: 'null'
+        net_income_attributable_to_parent:
+          type: number
+        net_income_attributable_to_noncontrolling_interests:
+          anyOf:
+          - type: number
+          - type: 'null'
+        depreciation_and_amortization:
+          anyOf:
+          - type: number
+          - type: 'null'
+        share_based_compensation:
+          type: number
+        eps_basic:
+          anyOf:
+          - type: number
+          - type: 'null'
+        eps_diluted:
+          anyOf:
+          - type: number
+          - type: 'null'
+        dividend_per_share:
+          type: number
+        weighted_average_shares_basic:
+          type: number
+        weighted_average_shares_diluted:
+          anyOf:
+          - type: number
+          - type: 'null'
+        ebitda:
+          anyOf:
+          - type: number
+          - type: 'null'
+      required:
+      - ticker
+      - market
+      - fiscal_year
+      - period
+      - period_start
+      - report_period
+      - currency
+      - accounting_standard
+      - accession_number
+      - form_type
+      - filing_url
+      - filing_date
+      - derived_fields
+      - derivation
+      - revenue
+      - cost_of_revenue
+      - gross_profit
+      - research_and_development_expense
+      - selling_and_marketing_expense
+      - general_and_administrative_expense
+      - selling_general_and_administrative_expense
+      - taxes_and_surcharges
+      - operating_expenses
+      - operating_income
+      - interest_income
+      - interest_expense
+      - other_non_operating_income
+      - ordinary_income
+      - extraordinary_gains
+      - extraordinary_losses
+      - pretax_income
+      - income_tax_expense
+      - net_income
+      - net_income_attributable_to_parent
+      - net_income_attributable_to_noncontrolling_interests
+      - depreciation_and_amortization
+      - share_based_compensation
+      - eps_basic
+      - eps_diluted
+      - dividend_per_share
+      - weighted_average_shares_basic
+      - weighted_average_shares_diluted
+      - ebitda
+      additionalProperties: false
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-KEY
+externalDocs:
+  description: API reference
+  url: https://drillr.ai/docs/api

@@ -1,0 +1,287 @@
+openapi: 3.2.0
+info:
+  title: drillr Public Data Prices API
+  version: 2.0.0-spec.110
+  description: 'REST endpoints over the same tables the drillr app runs on: fundamentals, filings, earnings, ownership, events, executives, analyst data and news for US, Japan and China equities.'
+  termsOfService: https://drillr.ai/legal/terms
+  contact:
+    name: drillr developer support
+    url: https://drillr.ai/docs
+    email: support@lil-grebe.com
+  license:
+    name: drillr Terms of Service
+    url: https://drillr.ai/legal/terms
+  x-logo:
+    url: https://drillr.ai/images/brand/logo_512_optimized.png
+    altText: drillr
+servers:
+- url: https://gateway.drillr.ai
+security:
+- ApiKeyAuth: []
+tags:
+- name: Prices
+  description: Historical bars and latest closing-price snapshots (US)
+paths:
+  /api/v2/prices-historical:
+    get:
+      operationId: publicDataV2PricesHistorical
+      tags:
+      - Prices
+      summary: Get US daily, weekly or monthly price history
+      description: 'Returns a stock''s historical daily, weekly or monthly bars: open, high, low and close, one row per bar, in descending `date` order. All bars in the date window come back in a single response; `limit` / `page` are not accepted. Prices are raw and unadjusted, updated after market close; there is no intraday or real-time data.
+
+
+        Example request: `GET /api/v2/prices-historical?ticker=AAPL&from=2026-01-01&to=2026-08-20&interval=week`'
+      security:
+      - ApiKeyAuth: []
+      x-credits: 0.02 cr per call
+      x-refresh: weekdays after close at 22:00 UTC
+      parameters:
+      - name: ticker
+        in: query
+        required: true
+        style: form
+        explode: false
+        schema:
+          type: array
+          items:
+            type: string
+          minItems: 1
+          maxItems: 1
+      - name: from
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: to
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: interval
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+          - day
+          - week
+          - month
+          default: day
+      responses:
+        '200':
+          description: Successful Public Data API response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PublicPricesHistoricalItem'
+                required:
+                - data
+                additionalProperties: false
+              example:
+                data:
+                - ticker: AAPL
+                  date: '2026-08-17'
+                  open: 248.93
+                  high: 249.1
+                  low: 241.82
+                  close: 243.85
+        '400':
+          description: Bad request (invalid or unsupported parameter)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '401':
+          description: Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '402':
+          description: Insufficient credits
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '404':
+          description: Ticker not found, market not covered, or dataset not available
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '429':
+          description: Rate limited
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '503':
+          description: Service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+  /api/v2/prices-snapshot:
+    get:
+      operationId: publicDataV2PricesSnapshot
+      tags:
+      - Prices
+      summary: Get latest US closing-price snapshots
+      description: 'Returns each stock''s closing price for its latest trading day, at most one row per ticker, with `date` as that trading day. Prices are unadjusted and updated after market close; this is not a real-time quote. Row order is not declared in the contract, so match rows to the request by the `ticker` field, not by position. US common stock only: if any ticker cannot be resolved or is non-US, the whole request returns `404` rather than returning what it can and silently dropping the rest. For historical prices use `/prices-historical`.
+
+
+        Example request: `GET /api/v2/prices-snapshot?ticker=AAPL,MSFT`'
+      security:
+      - ApiKeyAuth: []
+      x-credits: 0.02 cr per call
+      x-refresh: weekdays after close at 22:00 UTC
+      parameters:
+      - name: ticker
+        in: query
+        required: true
+        style: form
+        explode: false
+        schema:
+          type: array
+          items:
+            type: string
+          minItems: 1
+          maxItems: 50
+      responses:
+        '200':
+          description: Successful Public Data API response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PublicPricesSnapshotItem'
+                required:
+                - data
+                additionalProperties: false
+              example:
+                data:
+                - ticker: AAPL
+                  date: '2026-08-20'
+                  price: 231.42
+                - ticker: MSFT
+                  date: '2026-08-20'
+                  price: 512.3
+        '400':
+          description: Bad request (invalid or unsupported parameter)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '401':
+          description: Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '402':
+          description: Insufficient credits
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '404':
+          description: Ticker not found, market not covered, or dataset not available
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '429':
+          description: Rate limited
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '503':
+          description: Service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+components:
+  schemas:
+    PublicPricesSnapshotItem:
+      type: object
+      properties:
+        ticker:
+          type: string
+        date:
+          type: string
+          format: date
+        price:
+          type: number
+      required:
+      - ticker
+      - date
+      - price
+      additionalProperties: false
+    PublicPricesHistoricalItem:
+      type: object
+      properties:
+        ticker:
+          type: string
+        date:
+          type: string
+          format: date
+        open:
+          type: number
+        high:
+          type: number
+        low:
+          type: number
+        close:
+          type: number
+      required:
+      - ticker
+      - date
+      - open
+      - high
+      - low
+      - close
+      additionalProperties: false
+    PublicDataError:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+      required:
+      - error
+      - message
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-KEY
+externalDocs:
+  description: API reference
+  url: https://drillr.ai/docs/api

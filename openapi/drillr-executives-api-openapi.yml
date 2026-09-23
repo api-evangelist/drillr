@@ -1,0 +1,347 @@
+openapi: 3.2.0
+info:
+  title: drillr Public Data Executives API
+  version: 2.0.0-spec.110
+  description: 'REST endpoints over the same tables the drillr app runs on: fundamentals, filings, earnings, ownership, events, executives, analyst data and news for US, Japan and China equities.'
+  termsOfService: https://drillr.ai/legal/terms
+  contact:
+    name: drillr developer support
+    url: https://drillr.ai/docs
+    email: support@lil-grebe.com
+  license:
+    name: drillr Terms of Service
+    url: https://drillr.ai/legal/terms
+  x-logo:
+    url: https://drillr.ai/images/brand/logo_512_optimized.png
+    altText: drillr
+servers:
+- url: https://gateway.drillr.ai
+security:
+- ApiKeyAuth: []
+tags:
+- name: Executives
+  description: Executive roster and annual compensation (US only)
+paths:
+  /api/v2/executives:
+    get:
+      operationId: publicDataV2Executives
+      tags:
+      - Executives
+      summary: Get self-parsed executive profiles
+      description: 'Returns a company''s executive roster: name, position, whether currently serving, and the filing that evidences the position, one row per person per position; a person who has held several positions in turn has several rows. Start and end dates are not provided: `start_date` / `end_date` are always null (the columns stay in the contract and will be populated once 10-K Part III / 8-K Item 5.02 evidence is onboarded). Position information only, with no personal attributes such as gender or birth year.
+
+
+        Example request: `GET /api/v2/executives?ticker=AAPL`'
+      security:
+      - ApiKeyAuth: []
+      x-credits: 0.02 cr per call
+      x-refresh: weekdays 12:00 UTC; historical backfill every 30m while incomplete
+      parameters:
+      - name: ticker
+        in: query
+        required: true
+        style: form
+        explode: false
+        schema:
+          type: array
+          items:
+            type: string
+          minItems: 1
+          maxItems: 1
+      - name: is_current
+        in: query
+        required: false
+        schema:
+          type: boolean
+      responses:
+        '200':
+          description: Successful Public Data API response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PublicExecutivesItem'
+                required:
+                - data
+                additionalProperties: false
+              example:
+                data:
+                - ticker: AAPL
+                  name: Timothy D. Cook
+                  title: Chief Executive Officer and Director
+                  role_type: ceo
+                  start_date: null
+                  end_date: null
+                  is_current: true
+                  accession_number: 0001308179-26-000032
+                  form_type: DEF 14A
+                  filing_url: https://www.sec.gov/Archives/edgar/data/...
+                  filing_date: '2026-01-10'
+        '400':
+          description: Bad request (invalid or unsupported parameter)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '401':
+          description: Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '402':
+          description: Insufficient credits
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '404':
+          description: Ticker not found, market not covered, or dataset not available
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '429':
+          description: Rate limited
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '503':
+          description: Service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+  /api/v2/executive-compensation:
+    get:
+      operationId: publicDataV2ExecutiveCompensation
+      tags:
+      - Executives
+      summary: Get self-parsed executive compensation
+      description: 'Returns executives'' annual compensation: salary, bonus, stock and option awards, other compensation and the total, one row per executive per compensation year, taken from the Summary Compensation Table (SCT) of the DEF 14A; the amount columns map one-to-one onto the statutory SCT columns and are all as-disclosed values in USD, neither split nor converted.
+
+
+        Example request: `GET /api/v2/executive-compensation?ticker=AAPL`'
+      security:
+      - ApiKeyAuth: []
+      x-credits: 0.02 cr per call
+      x-refresh: weekdays 12:00 UTC; historical backfill every 30m while incomplete
+      parameters:
+      - name: ticker
+        in: query
+        required: true
+        style: form
+        explode: false
+        schema:
+          type: array
+          items:
+            type: string
+          minItems: 1
+          maxItems: 1
+      responses:
+        '200':
+          description: Successful Public Data API response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PublicExecutiveCompensationItem'
+                required:
+                - data
+                additionalProperties: false
+              example:
+                data:
+                - ticker: AAPL
+                  name: Timothy D. Cook
+                  title: Chief Executive Officer
+                  year: 2025
+                  salary: 3000000
+                  bonus: 0
+                  stock_awards: 58000000
+                  option_awards: 0
+                  non_equity_incentive: 12000000
+                  pension_value_change: 0
+                  other_compensation: 1500000
+                  total: 74500000
+                  accession_number: 0001308179-26-000032
+                  form_type: DEF 14A
+                  filing_url: https://www.sec.gov/Archives/edgar/data/...
+                  filing_date: '2026-01-10'
+        '400':
+          description: Bad request (invalid or unsupported parameter)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '401':
+          description: Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '402':
+          description: Insufficient credits
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '404':
+          description: Ticker not found, market not covered, or dataset not available
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '429':
+          description: Rate limited
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '503':
+          description: Service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+components:
+  schemas:
+    PublicDataError:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+      required:
+      - error
+      - message
+    PublicExecutiveCompensationItem:
+      type: object
+      properties:
+        ticker:
+          type: string
+        name:
+          type: string
+        title:
+          type: string
+        year:
+          type: integer
+        salary:
+          type: number
+        bonus:
+          type: number
+        stock_awards:
+          type: number
+        option_awards:
+          type: number
+        non_equity_incentive:
+          type: number
+        pension_value_change:
+          type: number
+        other_compensation:
+          type: number
+        total:
+          type: number
+        accession_number:
+          type: string
+        form_type:
+          type: string
+        filing_url:
+          type: string
+          format: uri
+        filing_date:
+          type: string
+          format: date
+      required:
+      - ticker
+      - name
+      - title
+      - year
+      - salary
+      - bonus
+      - stock_awards
+      - option_awards
+      - non_equity_incentive
+      - pension_value_change
+      - other_compensation
+      - total
+      - accession_number
+      - form_type
+      - filing_url
+      - filing_date
+      additionalProperties: false
+    PublicExecutivesItem:
+      type: object
+      properties:
+        ticker:
+          type: string
+        name:
+          type: string
+        title:
+          type: string
+        role_type:
+          type: string
+        start_date:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+        end_date:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+        is_current:
+          type: boolean
+        accession_number:
+          type: string
+        form_type:
+          type: string
+        filing_url:
+          type: string
+          format: uri
+        filing_date:
+          type: string
+          format: date
+      required:
+      - ticker
+      - name
+      - title
+      - role_type
+      - start_date
+      - end_date
+      - is_current
+      - accession_number
+      - form_type
+      - filing_url
+      - filing_date
+      additionalProperties: false
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-KEY
+externalDocs:
+  description: API reference
+  url: https://drillr.ai/docs/api

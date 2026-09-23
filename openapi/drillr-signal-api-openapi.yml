@@ -1,0 +1,977 @@
+openapi: 3.2.0
+info:
+  title: drillr Public Data Signal API
+  version: 2.0.0-spec.110
+  description: 'REST endpoints over the same tables the drillr app runs on: fundamentals, filings, earnings, ownership, events, executives, analyst data and news for US, Japan and China equities.'
+  termsOfService: https://drillr.ai/legal/terms
+  contact:
+    name: drillr developer support
+    url: https://drillr.ai/docs
+    email: support@lil-grebe.com
+  license:
+    name: drillr Terms of Service
+    url: https://drillr.ai/legal/terms
+  x-logo:
+    url: https://drillr.ai/images/brand/logo_512_optimized.png
+    altText: drillr
+servers:
+- url: https://gateway.drillr.ai
+security:
+- ApiKeyAuth: []
+tags:
+- name: Signal
+  description: Industry inflections, enterprise AI adoption and cross-source news search
+paths:
+  /api/v2/industry-inflections:
+    get:
+      operationId: publicDataV2IndustryInflections
+      tags:
+      - Signal
+      summary: List published industry inflections
+      description: 'Returns industry-level changes synthesized from the earnings calls of multiple US-listed companies, one row per inflection theme that can be tracked over time: the change mechanism, impact scope and degree, market attention, and the per-company impact breakdown (the `company_impacts` array, not flattened by company). Built from earnings calls held after July 2026 and refreshed daily as new calls and evidence arrive.
+
+
+        Example request: `GET /api/v2/industry-inflections?limit=10&page=1`'
+      security:
+      - ApiKeyAuth: []
+      x-credits: 1 cr per call
+      x-refresh: daily upstream research refresh and historical replay
+      parameters:
+      - name: keyword
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: ticker
+        in: query
+        required: false
+        style: form
+        explode: false
+        schema:
+          type: array
+          items:
+            type: string
+          minItems: 1
+          maxItems: 10
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 10
+          default: 10
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+      responses:
+        '200':
+          description: Successful Public Data API response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PublicIndustryInflectionsItem'
+                required:
+                - data
+                additionalProperties: false
+              example:
+                data:
+                - change_id: theme_0652186192fd13ab
+                  quarter: 2026Q2
+                  name: Conflict feedstock rationing re-sorts who can supply
+                  regime_type: competition
+                  impact_scope: cross_industry
+                  impact_degree: 2
+                  attention_verdict: partly
+                  change_summary: …
+                  first_seen: '2026-08-13'
+                  source_tickers:
+                  - ANSLY
+                  - GRSXY
+                  - UFI
+                  company_impacts:
+                  - ticker: UFI
+                    relation: direct
+                    direction: positive
+                    magnitude: 2
+                    impact_stage: realized
+                    evidence_status: confirmed
+                    affected_business: Brazil segment …
+                    impact: …
+        '400':
+          description: Bad request (invalid or unsupported parameter)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '401':
+          description: Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '402':
+          description: Insufficient credits
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '404':
+          description: Ticker not found, market not covered, or dataset not available
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '429':
+          description: Rate limited
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '503':
+          description: Service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+  /api/v2/enterprise-ai-adoption:
+    get:
+      operationId: publicDataV2EnterpriseAiAdoption
+      tags:
+      - Signal
+      summary: List enterprise AI adoption observations
+      description: 'Returns the concrete enterprise AI applications US-listed companies have disclosed on earnings calls: the workflow each is used in, its deployment stage and scope, the value disclosed, metrics and supporting evidence. General statements about AI strategy are excluded.
+
+
+        Example request: `GET /api/v2/enterprise-ai-adoption?ticker=ALHC&since=2024-01-01`'
+      security:
+      - ApiKeyAuth: []
+      x-credits: 1 cr per call
+      x-refresh: daily upstream research refresh and historical replay
+      parameters:
+      - name: ticker
+        in: query
+        required: false
+        style: form
+        explode: false
+        schema:
+          type: array
+          items:
+            type: string
+          minItems: 1
+          maxItems: 10
+      - name: since
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date-time
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 10
+          default: 10
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+      responses:
+        '200':
+          description: Successful Public Data API response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PublicEnterpriseAiAdoptionItem'
+                required:
+                - data
+                additionalProperties: false
+              example:
+                data:
+                - deployment_id: p91_external_case_05f447e473a6182f
+                  application_id: app_b5743ede99d797b3
+                  ticker: ALHC
+                  company_name: Alignment Healthcare, Inc.
+                  application_name: AI-leveraging contract management solutions …
+                  first_report_date: '2026-04-30'
+                  update_date: '2026-04-30'
+                  summary: '[Application] … [Current Result] … [Financial Link] … [Boundary] …'
+                  evolution_summary: '[Management Stance] … '
+                  business_position: support_function
+                  deployment_stage: unclear
+                  deployment_scope: unclear
+                  value_type: cost_reduction
+                  metrics:
+                  - metric_name: Administrative cost reduction
+                    value: 15%
+                    scope: Contract management workflow
+                    metric_role: realized_result
+                    financial_metric: operating_expenses
+                    financial_attribution: Management attributed part of the reduction to the AI-enabled workflow.
+                    evidence_id: ev_3f1c8a20d4b7
+                  evidence:
+                  - evidence_id: ev_3f1c8a20d4b7
+                    quote: we are also deploying contract management solutions that leverage AI …
+                    speaker: null
+                    section: null
+        '400':
+          description: Bad request (invalid or unsupported parameter)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '401':
+          description: Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '402':
+          description: Insufficient credits
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '404':
+          description: Ticker not found, market not covered, or dataset not available
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '429':
+          description: Rate limited
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '503':
+          description: Service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+  /api/v2/news-search:
+    post:
+      operationId: publicDataV2NewsSearch
+      tags:
+      - Signal
+      summary: Search cross-source news storylines, events and attributed claims
+      description: 'Searches news across sources and returns storylines. Duplicate reports of the same occurrence are merged into one event, related events are grouped into a storyline, and statements with a named speaker and subject are returned separately as attributed claims (`claims`). Each item in `results` is a storyline, not an article; every result is an in-house summary with links to the original sources, and article text is not included.
+
+
+        Example request: `POST /api/v2/news-search` with the JSON body shown below.'
+      security:
+      - ApiKeyAuth: []
+      x-credits: 1 cr per call
+      x-refresh: continuous signal ingestion
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                query:
+                  type: string
+                theme:
+                  type: string
+                ticker:
+                  anyOf:
+                  - type: string
+                    minLength: 1
+                  - type: array
+                    items:
+                      type: string
+                      minLength: 1
+                    minItems: 1
+                    maxItems: 1
+                since:
+                  type: string
+                  format: date-time
+                until:
+                  type: string
+                  format: date-time
+                search_type:
+                  type: string
+                  enum:
+                  - all
+                  - events
+                  - claims
+                  default: all
+                order_by:
+                  type: string
+                  enum:
+                  - relevance
+                  - event_time
+                  - create_time
+                  default: relevance
+                top_k:
+                  type: integer
+                  minimum: 1
+                  maximum: 50
+                  default: 10
+                cursor:
+                  type: string
+              required: []
+              anyOf:
+              - required:
+                - query
+              - required:
+                - theme
+              - required:
+                - ticker
+              - required:
+                - since
+              - required:
+                - until
+              additionalProperties: false
+            example:
+              query: export controls
+              ticker: NVDA
+              search_type: all
+              order_by: relevance
+              top_k: 2
+      responses:
+        '200':
+          description: Successful Public Data API response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicNewsSearchItem'
+              example:
+                query: export controls
+                theme: null
+                theme_resolved: null
+                ticker:
+                - NVDA
+                since: null
+                until: null
+                order_by: relevance
+                count: 2
+                results:
+                - story_id: 123
+                  title: US Tightens AI Chip Export Curbs on China
+                  summary: The US expanded restrictions on access to advanced AI chips.
+                  node_count: 48
+                  first_seen_at: '2026-05-30T23:59:59Z'
+                  last_seen_at: '2026-08-31T07:05:38Z'
+                  created_at: '2026-05-30T23:59:59Z'
+                  sim: 0.91
+                  events_in_window: 2
+                  tags:
+                    version: 1
+                    primary_class: legal_regulatory
+                    event_types:
+                    - regulatory_action
+                    regions:
+                    - US
+                    - CN
+                    sectors_gics:
+                    - Information Technology
+                  events:
+                  - id: 456
+                    time_event: '2026-08-31T07:05:38Z'
+                    summary: US authorities expanded AI-chip export controls.
+                    event_type: regulatory_action
+                    event_subtype: null
+                    primary_entity_name: United States
+                    object_name: Nvidia
+                    score: 4.5
+                    sim: 0.88
+                    sources_total: 6
+                    first_reported: '2026-08-31T07:05:38Z'
+                    last_reported: '2026-08-31T09:12:00Z'
+                    source:
+                      name: Reuters
+                      url: https://www.reuters.com/...
+                      time: '2026-08-31T07:05:38Z'
+                      headline: US tightens AI chip export curbs
+                claims:
+                - id: 789
+                  time_event: '2026-08-31T08:00:00Z'
+                  claim_type: policy_statement
+                  claim_subtype: null
+                  claimant_name: US Department of Commerce
+                  target_name: Nvidia
+                  summary: The department said the updated controls cover additional advanced chips.
+                  sources_total: 3
+                  first_reported: '2026-08-31T08:00:00Z'
+                  last_reported: '2026-08-31T09:20:00Z'
+                  source:
+                    name: Reuters
+                    url: https://www.reuters.com/...
+                    time: '2026-08-31T08:00:00Z'
+                    headline: US updates advanced-chip export controls
+                next_cursor: null
+                claims_skipped: null
+        '400':
+          description: Bad request (invalid or unsupported parameter)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '401':
+          description: Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '402':
+          description: Insufficient credits
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '404':
+          description: Ticker not found, market not covered, or dataset not available
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '429':
+          description: Rate limited
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '503':
+          description: Service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+components:
+  schemas:
+    PublicIndustryInflectionsItem:
+      type: object
+      properties:
+        change_id:
+          type: string
+        quarter:
+          type: string
+        name:
+          type: string
+        regime_type:
+          type: string
+        impact_scope:
+          type: string
+        impact_degree:
+          type: integer
+        attention_verdict:
+          type: string
+        change_summary:
+          type: string
+        first_seen:
+          type: string
+          format: date
+        source_tickers:
+          type: array
+          items:
+            type: string
+        company_impacts:
+          type: array
+          items:
+            type: object
+            properties:
+              ticker:
+                type: string
+              relation:
+                type: string
+                enum:
+                - direct
+                - indirect
+              direction:
+                type: string
+                enum:
+                - positive
+                - negative
+                - mixed
+                - unclear
+              magnitude:
+                type:
+                - integer
+                - 'null'
+                minimum: 1
+                maximum: 3
+              impact_stage:
+                type: string
+                enum:
+                - realized
+                - emerging
+                - not_yet
+                - unclear
+              evidence_status:
+                type: string
+                enum:
+                - confirmed
+                - inferred
+              affected_business:
+                type:
+                - string
+                - 'null'
+              impact:
+                type: string
+            required:
+            - ticker
+            - relation
+            - direction
+            - magnitude
+            - impact_stage
+            - evidence_status
+            - affected_business
+            - impact
+            additionalProperties: false
+      required:
+      - change_id
+      - quarter
+      - name
+      - regime_type
+      - impact_scope
+      - impact_degree
+      - attention_verdict
+      - change_summary
+      - first_seen
+      - source_tickers
+      - company_impacts
+      additionalProperties: false
+    PublicEnterpriseAiAdoptionItem:
+      type: object
+      properties:
+        deployment_id:
+          type: string
+        application_id:
+          type: string
+        ticker:
+          type: string
+        company_name:
+          type: string
+        application_name:
+          type: string
+        first_report_date:
+          type: string
+          format: date
+        update_date:
+          type: string
+          format: date
+        summary:
+          type: string
+        evolution_summary:
+          type: string
+        business_position:
+          type: string
+        deployment_stage:
+          type: string
+        deployment_scope:
+          type: string
+        value_type:
+          type: string
+        metrics:
+          type: array
+          items:
+            type: object
+            properties:
+              metric_name:
+                type: string
+              value:
+                type: string
+              scope:
+                type: string
+              metric_role:
+                type: string
+              financial_metric:
+                type:
+                - string
+                - 'null'
+              financial_attribution:
+                type:
+                - string
+                - 'null'
+              evidence_id:
+                type: string
+            required:
+            - metric_name
+            - value
+            - scope
+            - metric_role
+            - financial_metric
+            - financial_attribution
+            - evidence_id
+            additionalProperties: false
+        evidence:
+          type: array
+          items:
+            type: object
+            properties:
+              evidence_id:
+                type: string
+              quote:
+                type: string
+              speaker:
+                type:
+                - string
+                - 'null'
+              section:
+                type:
+                - string
+                - 'null'
+            required:
+            - evidence_id
+            - quote
+            - speaker
+            - section
+            additionalProperties: false
+      required:
+      - deployment_id
+      - application_id
+      - ticker
+      - company_name
+      - application_name
+      - first_report_date
+      - update_date
+      - summary
+      - evolution_summary
+      - business_position
+      - deployment_stage
+      - deployment_scope
+      - value_type
+      - metrics
+      - evidence
+      additionalProperties: false
+    PublicNewsSearchItem:
+      type: object
+      properties:
+        query:
+          type:
+          - string
+          - 'null'
+        theme:
+          type:
+          - string
+          - 'null'
+        theme_resolved:
+          anyOf:
+          - type: object
+            properties:
+              id:
+                type:
+                - integer
+                - 'null'
+              label:
+                type: string
+              sim:
+                type: number
+              matched:
+                type: boolean
+            required:
+            - id
+            - label
+            - sim
+            - matched
+            additionalProperties: false
+          - type: 'null'
+        ticker:
+          type: array
+          items:
+            type: string
+        since:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        until:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        order_by:
+          type: string
+          enum:
+          - relevance
+          - event_time
+          - create_time
+        count:
+          type: integer
+        results:
+          type: array
+          items:
+            type: object
+            properties:
+              story_id:
+                type: integer
+              title:
+                type: string
+              summary:
+                type: string
+              node_count:
+                type: integer
+              first_seen_at:
+                type: string
+                format: date-time
+              last_seen_at:
+                type: string
+                format: date-time
+              created_at:
+                type: string
+                format: date-time
+              sim:
+                type: number
+              events_in_window:
+                type: integer
+              tags:
+                type: object
+                properties:
+                  version:
+                    type: integer
+                  primary_class:
+                    type: string
+                  event_types:
+                    type: array
+                    items:
+                      type: string
+                  regions:
+                    type: array
+                    items:
+                      type: string
+                  sectors_gics:
+                    type: array
+                    items:
+                      type: string
+                required:
+                - version
+                - primary_class
+                - event_types
+                - regions
+                - sectors_gics
+                additionalProperties: false
+              events:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    time_event:
+                      type: string
+                      format: date-time
+                    summary:
+                      type: string
+                    event_type:
+                      type: string
+                    event_subtype:
+                      type:
+                      - string
+                      - 'null'
+                    primary_entity_name:
+                      type:
+                      - string
+                      - 'null'
+                    object_name:
+                      type:
+                      - string
+                      - 'null'
+                    score:
+                      type: number
+                    sim:
+                      type: number
+                    sources_total:
+                      type: integer
+                    first_reported:
+                      type: string
+                      format: date-time
+                    last_reported:
+                      type: string
+                      format: date-time
+                    source:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                        url:
+                          type: string
+                          format: uri
+                        time:
+                          type: string
+                          format: date-time
+                        headline:
+                          type:
+                          - string
+                          - 'null'
+                      required:
+                      - name
+                      - url
+                      - time
+                      - headline
+                      additionalProperties: false
+                  required:
+                  - id
+                  - time_event
+                  - summary
+                  - event_type
+                  - event_subtype
+                  - primary_entity_name
+                  - object_name
+                  - score
+                  - sim
+                  - sources_total
+                  - first_reported
+                  - last_reported
+                  - source
+                  additionalProperties: false
+            required:
+            - story_id
+            - title
+            - summary
+            - node_count
+            - first_seen_at
+            - last_seen_at
+            - created_at
+            - sim
+            - events_in_window
+            - tags
+            - events
+            additionalProperties: false
+        claims:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+              time_event:
+                type: string
+                format: date-time
+              claim_type:
+                type: string
+              claim_subtype:
+                type:
+                - string
+                - 'null'
+              claimant_name:
+                type:
+                - string
+                - 'null'
+              target_name:
+                type:
+                - string
+                - 'null'
+              summary:
+                type: string
+              sources_total:
+                type: integer
+              first_reported:
+                type: string
+                format: date-time
+              last_reported:
+                type: string
+                format: date-time
+              source:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  url:
+                    type: string
+                    format: uri
+                  time:
+                    type: string
+                    format: date-time
+                  headline:
+                    type:
+                    - string
+                    - 'null'
+                required:
+                - name
+                - url
+                - time
+                - headline
+                additionalProperties: false
+            required:
+            - id
+            - time_event
+            - claim_type
+            - claim_subtype
+            - claimant_name
+            - target_name
+            - summary
+            - sources_total
+            - first_reported
+            - last_reported
+            - source
+            additionalProperties: false
+        next_cursor:
+          type:
+          - string
+          - 'null'
+        claims_skipped:
+          type:
+          - string
+          - 'null'
+      required:
+      - query
+      - theme
+      - theme_resolved
+      - ticker
+      - since
+      - until
+      - order_by
+      - count
+      - results
+      - claims
+      - next_cursor
+      - claims_skipped
+      additionalProperties: false
+    PublicDataError:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+      required:
+      - error
+      - message
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-KEY
+externalDocs:
+  description: API reference
+  url: https://drillr.ai/docs/api

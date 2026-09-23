@@ -1,0 +1,492 @@
+openapi: 3.2.0
+info:
+  title: drillr Public Data Company API
+  version: 2.0.0-spec.110
+  description: 'REST endpoints over the same tables the drillr app runs on: fundamentals, filings, earnings, ownership, events, executives, analyst data and news for US, Japan and China equities.'
+  termsOfService: https://drillr.ai/legal/terms
+  contact:
+    name: drillr developer support
+    url: https://drillr.ai/docs
+    email: support@lil-grebe.com
+  license:
+    name: drillr Terms of Service
+    url: https://drillr.ai/legal/terms
+  x-logo:
+    url: https://drillr.ai/images/brand/logo_512_optimized.png
+    altText: drillr
+servers:
+- url: https://gateway.drillr.ai
+security:
+- ApiKeyAuth: []
+tags:
+- name: Company
+  description: Ticker resolution, natural-language company discovery and company profiles
+paths:
+  /api/v2/tickers:
+    get:
+      operationId: publicDataV2Tickers
+      tags:
+      - Company
+      summary: Resolve or list canonical tickers
+      description: 'Converts a company name, local code, ISIN, CIK or CUSIP into the `ticker` that every other endpoint uses, one per row. Without `query`, lists all currently trading common stocks in a market. Call this first when you only have a name or an identifier.
+
+
+        Example request: `GET /api/v2/tickers?query=Apple%20Inc.&market=US`'
+      security:
+      - ApiKeyAuth: []
+      x-credits: 0.02 cr per call
+      x-refresh: weekdays; profile 07:00 UTC, snapshot 16:00 UTC
+      parameters:
+      - name: query
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: market
+        in: query
+        required: false
+        style: form
+        explode: false
+        schema:
+          type: array
+          items:
+            type: string
+            enum:
+            - US
+            - CN
+            - JP
+          minItems: 1
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 500
+          default: 10
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+      responses:
+        '200':
+          description: Successful Public Data API response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PublicTickersItem'
+                required:
+                - data
+                additionalProperties: false
+              example:
+                data:
+                - ticker: AAPL
+                  market: US
+                  name: Apple Inc.
+                  exchange: XNAS
+                  identifiers:
+                    isin: US0378331005
+                    cik: 0000320193
+                    cusip: 037833100
+        '400':
+          description: Bad request (invalid or unsupported parameter)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '401':
+          description: Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '402':
+          description: Insufficient credits
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '404':
+          description: Ticker not found, market not covered, or dataset not available
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '429':
+          description: Rate limited
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '503':
+          description: Service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+  /api/v2/company-discovery:
+    get:
+      operationId: publicDataV2CompanyDiscovery
+      tags:
+      - Company
+      summary: Discover companies from a natural-language description
+      description: 'Finds companies from a plain-language description. Returns every candidate that passes verification, one company per row: the ticker, the company name and the reason it matched. Use it when you do not know the ticker, then call the other endpoints with what it returns.
+
+
+        Example request: `GET /api/v2/company-discovery?query=US%20companies%20that%20design%20GPUs%20for%20data%20centers&market=US`'
+      security:
+      - ApiKeyAuth: []
+      x-credits: 3 cr per call
+      x-refresh: follows company snapshot rebuild
+      parameters:
+      - name: query
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: market
+        in: query
+        required: false
+        style: form
+        explode: false
+        schema:
+          type: array
+          items:
+            type: string
+            enum:
+            - US
+            - CN
+            - JP
+            - HK
+            - KR
+          minItems: 1
+      responses:
+        '200':
+          description: Successful Public Data API response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PublicCompanyDiscoveryItem'
+                required:
+                - data
+                additionalProperties: false
+              example:
+                data:
+                - ticker: NVDA
+                  company_name: NVIDIA Corporation
+                  reason: US company designing GPUs for accelerated data center platforms.
+                - ticker: AMD
+                  company_name: Advanced Micro Devices, Inc.
+                  reason: US company designing data center GPUs, including Radeon and Instinct accelerators.
+                - ticker: INTC
+                  company_name: Intel Corp.
+                  reason: Designs data center and AI discrete GPUs.
+        '400':
+          description: Bad request (invalid or unsupported parameter)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '401':
+          description: Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '402':
+          description: Insufficient credits
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '404':
+          description: Ticker not found, market not covered, or dataset not available
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '429':
+          description: Rate limited
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '503':
+          description: Service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+  /api/v2/company-profile:
+    get:
+      operationId: publicDataV2CompanyProfile
+      tags:
+      - Company
+      summary: Get company profiles
+      description: 'Returns basic company profiles and external identifiers, one row per company. For prices, use `/prices-snapshot`; for valuation, use `/financial-metrics-snapshot`.
+
+
+        Example request: `GET /api/v2/company-profile?ticker=AAPL`'
+      security:
+      - ApiKeyAuth: []
+      x-credits: 0.02 cr per call
+      x-refresh: weekdays; profile 07:00 UTC, snapshot 16:00 UTC
+      parameters:
+      - name: ticker
+        in: query
+        required: true
+        style: form
+        explode: false
+        schema:
+          type: array
+          items:
+            type: string
+          minItems: 1
+          maxItems: 50
+      responses:
+        '200':
+          description: Successful Public Data API response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PublicCompanyProfileItem'
+                required:
+                - data
+                additionalProperties: false
+              example:
+                data:
+                - ticker: AAPL
+                  market: US
+                  name: Apple Inc.
+                  name_local: null
+                  exchange: XNAS
+                  country: US
+                  currency: USD
+                  sector: Technology
+                  industry: Consumer Electronics
+                  listing_date: '1980-12-12'
+                  website: https://www.apple.com
+                  full_time_employees: 164000
+                  identifiers:
+                    isin: US0378331005
+                    cik: 0000320193
+                    cusip: 037833100
+        '400':
+          description: Bad request (invalid or unsupported parameter)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '401':
+          description: Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '402':
+          description: Insufficient credits
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '404':
+          description: Ticker not found, market not covered, or dataset not available
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '429':
+          description: Rate limited
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '503':
+          description: Service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+components:
+  schemas:
+    PublicTickersItem:
+      type: object
+      properties:
+        ticker:
+          type: string
+        market:
+          type: string
+          enum:
+          - US
+          - CN
+          - JP
+        name:
+          type: string
+        exchange:
+          type: string
+        identifiers:
+          type: object
+          properties:
+            isin:
+              type:
+              - string
+              - 'null'
+            cik:
+              type:
+              - string
+              - 'null'
+            cusip:
+              type:
+              - string
+              - 'null'
+          required:
+          - isin
+          - cik
+          - cusip
+          additionalProperties: false
+      required:
+      - ticker
+      - market
+      - name
+      - exchange
+      - identifiers
+      additionalProperties: false
+    PublicDataError:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+      required:
+      - error
+      - message
+    PublicCompanyDiscoveryItem:
+      type: object
+      properties:
+        ticker:
+          type: string
+        company_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+        reason:
+          type: string
+      required:
+      - ticker
+      - company_name
+      - reason
+      additionalProperties: false
+    PublicCompanyProfileItem:
+      type: object
+      properties:
+        ticker:
+          type: string
+        market:
+          type: string
+          enum:
+          - US
+          - CN
+          - JP
+        name:
+          type: string
+        name_local:
+          anyOf:
+          - type: string
+          - type: 'null'
+        exchange:
+          type: string
+        country:
+          type: string
+        currency:
+          type: string
+        sector:
+          type: string
+        industry:
+          type: string
+        listing_date:
+          type: string
+          format: date
+        website:
+          type: string
+        full_time_employees:
+          type: integer
+        identifiers:
+          type: object
+          properties:
+            isin:
+              type:
+              - string
+              - 'null'
+            cik:
+              type:
+              - string
+              - 'null'
+            cusip:
+              type:
+              - string
+              - 'null'
+          required:
+          - isin
+          - cik
+          - cusip
+          additionalProperties: false
+      required:
+      - ticker
+      - market
+      - name
+      - name_local
+      - exchange
+      - country
+      - currency
+      - sector
+      - industry
+      - listing_date
+      - website
+      - full_time_employees
+      - identifiers
+      additionalProperties: false
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-KEY
+externalDocs:
+  description: API reference
+  url: https://drillr.ai/docs/api

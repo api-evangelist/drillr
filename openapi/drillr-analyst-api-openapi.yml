@@ -1,0 +1,364 @@
+openapi: 3.2.0
+info:
+  title: drillr Public Data Analyst API
+  version: 2.0.0-spec.110
+  description: 'REST endpoints over the same tables the drillr app runs on: fundamentals, filings, earnings, ownership, events, executives, analyst data and news for US, Japan and China equities.'
+  termsOfService: https://drillr.ai/legal/terms
+  contact:
+    name: drillr developer support
+    url: https://drillr.ai/docs
+    email: support@lil-grebe.com
+  license:
+    name: drillr Terms of Service
+    url: https://drillr.ai/legal/terms
+  x-logo:
+    url: https://drillr.ai/images/brand/logo_512_optimized.png
+    altText: drillr
+servers:
+- url: https://gateway.drillr.ai
+security:
+- ApiKeyAuth: []
+tags:
+- name: Analyst
+  description: Analyst consensus and individual rating events (US only)
+paths:
+  /api/v2/analyst-consensus:
+    get:
+      operationId: publicDataV2AnalystConsensus
+      tags:
+      - Analyst
+      summary: Get self-built analyst consensus
+      description: 'Returns the analyst consensus for a stock: the five-tier distribution (strong buy to strong sell) of each firm''s latest rating within the last 90 days, plus the mean / high / low price target, one row per ticker. Aggregated results only; this platform''s own ratings are not included.
+
+
+        Example request: `GET /api/v2/analyst-consensus?ticker=NVDA,AMD`'
+      security:
+      - ApiKeyAuth: []
+      x-credits: 0.02 cr per call
+      x-refresh: daily 23:00 UTC
+      parameters:
+      - name: ticker
+        in: query
+        required: true
+        style: form
+        explode: false
+        schema:
+          type: array
+          items:
+            type: string
+          minItems: 1
+          maxItems: 50
+      responses:
+        '200':
+          description: Successful Public Data API response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PublicAnalystConsensusItem'
+                required:
+                - data
+                additionalProperties: false
+              example:
+                data:
+                - ticker: NVDA
+                  total_analysts: 47
+                  strong_buy: 6
+                  buy: 24
+                  hold: 15
+                  sell: 2
+                  strong_sell: 0
+                  consensus_rating: buy
+                  price_target_consensus: 172.5
+                  price_target_high: 220
+                  price_target_low: 120
+                  price_target_count: 41
+        '400':
+          description: Bad request (invalid or unsupported parameter)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '401':
+          description: Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '402':
+          description: Insufficient credits
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '404':
+          description: Ticker not found, market not covered, or dataset not available
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '429':
+          description: Rate limited
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '503':
+          description: Service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+  /api/v2/analyst-ratings:
+    get:
+      operationId: publicDataV2AnalystRatings
+      tags:
+      - Analyst
+      summary: Get self-parsed analyst rating events
+      description: 'Returns individual analyst rating and price target changes: which firm upgraded, downgraded or maintained a rating on which day, and what the price target moved from and to, one row per event, ordered by `date desc, published_at desc`. Sourced from news reports; every row carries the firm name `firm` and a link to the source article `source_url`, and events missing either are not exposed. Firm level only, with no individual analyst names.
+
+
+        Example request: `GET /api/v2/analyst-ratings?ticker=NVDA&from=2026-07-01&to=2026-07-31`'
+      security:
+      - ApiKeyAuth: []
+      x-credits: 0.02 cr per call
+      x-refresh: daily 23:00 UTC
+      parameters:
+      - name: ticker
+        in: query
+        required: true
+        style: form
+        explode: false
+        schema:
+          type: array
+          items:
+            type: string
+          minItems: 1
+          maxItems: 1
+      - name: from
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: to
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 500
+          default: 50
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+      responses:
+        '200':
+          description: Successful Public Data API response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PublicAnalystRatingsItem'
+                required:
+                - data
+                additionalProperties: false
+              example:
+                data:
+                - ticker: NVDA
+                  date: '2026-07-14'
+                  firm: Zacks Investment Research
+                  rating_action: upgrade
+                  price_target_action: null
+                  rating_current: buy
+                  rating_prior: null
+                  rating_current_normalized: buy
+                  price_target_current: null
+                  price_target_prior: null
+                  source_name: nasdaq
+                  source_url: https://www.nasdaq.com/articles/nvidia-nvda-upgraded-buy-heres-what-you-should-know
+                  published_at: '2026-07-14T16:00:02+00:00'
+        '400':
+          description: Bad request (invalid or unsupported parameter)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '401':
+          description: Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '402':
+          description: Insufficient credits
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '404':
+          description: Ticker not found, market not covered, or dataset not available
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '429':
+          description: Rate limited
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '503':
+          description: Service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+components:
+  schemas:
+    PublicDataError:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+      required:
+      - error
+      - message
+    PublicAnalystConsensusItem:
+      type: object
+      properties:
+        ticker:
+          type: string
+        total_analysts:
+          type: integer
+        strong_buy:
+          type: integer
+        buy:
+          type: integer
+        hold:
+          type: integer
+        sell:
+          type: integer
+        strong_sell:
+          type: integer
+        consensus_rating:
+          type: string
+        price_target_consensus:
+          type: number
+        price_target_high:
+          type: number
+        price_target_low:
+          type: number
+        price_target_count:
+          type: integer
+      required:
+      - ticker
+      - total_analysts
+      - strong_buy
+      - buy
+      - hold
+      - sell
+      - strong_sell
+      - consensus_rating
+      - price_target_consensus
+      - price_target_high
+      - price_target_low
+      - price_target_count
+      additionalProperties: false
+    PublicAnalystRatingsItem:
+      type: object
+      properties:
+        ticker:
+          type: string
+        date:
+          type: string
+          format: date
+        firm:
+          type: string
+        rating_action:
+          type: string
+        price_target_action:
+          anyOf:
+          - type: string
+          - type: 'null'
+        rating_current:
+          type: string
+        rating_prior:
+          anyOf:
+          - type: string
+          - type: 'null'
+        rating_current_normalized:
+          anyOf:
+          - type: string
+          - type: 'null'
+        price_target_current:
+          anyOf:
+          - type: number
+          - type: 'null'
+        price_target_prior:
+          anyOf:
+          - type: number
+          - type: 'null'
+        source_name:
+          type: string
+        source_url:
+          type: string
+          format: uri
+        published_at:
+          type: string
+          format: date-time
+      required:
+      - ticker
+      - date
+      - firm
+      - rating_action
+      - price_target_action
+      - rating_current
+      - rating_prior
+      - rating_current_normalized
+      - price_target_current
+      - price_target_prior
+      - source_name
+      - source_url
+      - published_at
+      additionalProperties: false
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-KEY
+externalDocs:
+  description: API reference
+  url: https://drillr.ai/docs/api

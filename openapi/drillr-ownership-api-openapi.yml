@@ -1,0 +1,487 @@
+openapi: 3.2.0
+info:
+  title: drillr Public Data Ownership API
+  version: 2.0.0-spec.110
+  description: 'REST endpoints over the same tables the drillr app runs on: fundamentals, filings, earnings, ownership, events, executives, analyst data and news for US, Japan and China equities.'
+  termsOfService: https://drillr.ai/legal/terms
+  contact:
+    name: drillr developer support
+    url: https://drillr.ai/docs
+    email: support@lil-grebe.com
+  license:
+    name: drillr Terms of Service
+    url: https://drillr.ai/legal/terms
+  x-logo:
+    url: https://drillr.ai/images/brand/logo_512_optimized.png
+    altText: drillr
+servers:
+- url: https://gateway.drillr.ai
+security:
+- ApiKeyAuth: []
+tags:
+- name: Ownership
+  description: Insider holdings and transactions, institutional holdings (US only)
+paths:
+  /api/v2/insider-trades:
+    get:
+      operationId: publicDataV2InsiderTrades
+      tags:
+      - Ownership
+      summary: Get self-parsed insider holdings and transactions
+      description: 'Query insiders'' initial holdings and transactions for a company. Each row represents one Form 3 initial holding or one Form 4 / Form 5 transaction, including amended filings.
+
+
+        Example request: `GET /api/v2/insider-trades?ticker=AAPL&from=2026-07-01&to=2026-08-31&transaction_type=sell&is_amendment=false`'
+      security:
+      - ApiKeyAuth: []
+      x-credits: 0.02 cr per call
+      x-refresh: daily 11:00 UTC plus weekly replay
+      parameters:
+      - name: ticker
+        in: query
+        required: true
+        style: form
+        explode: false
+        schema:
+          type: array
+          items:
+            type: string
+          minItems: 1
+          maxItems: 1
+      - name: from
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: to
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: record_type
+        in: query
+        required: false
+        style: form
+        explode: false
+        schema:
+          type: array
+          items:
+            type: string
+            enum:
+            - initial_holding
+            - transaction
+          minItems: 1
+      - name: form_type
+        in: query
+        required: false
+        style: form
+        explode: false
+        schema:
+          type: array
+          items:
+            type: string
+            enum:
+            - '3'
+            - 3/A
+            - '4'
+            - 4/A
+            - '5'
+            - 5/A
+          minItems: 1
+      - name: transaction_type
+        in: query
+        required: false
+        style: form
+        explode: false
+        schema:
+          type: array
+          items:
+            type: string
+            enum:
+            - buy
+            - sell
+            - award
+            - exercise
+            - tax_withholding
+            - other
+          minItems: 1
+      - name: is_amendment
+        in: query
+        required: false
+        schema:
+          type: boolean
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 500
+          default: 50
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+      responses:
+        '200':
+          description: Successful Public Data API response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PublicInsiderTradesItem'
+                required:
+                - data
+                additionalProperties: false
+              example:
+                data:
+                - ticker: AAPL
+                  insider_name: COOK TIMOTHY D
+                  insider_title: Chief Executive Officer
+                  is_director: true
+                  is_officer: true
+                  record_type: transaction
+                  transaction_type: sell
+                  transaction_code: S
+                  transaction_date: '2026-08-03'
+                  security_title: Common Stock
+                  ownership_type: direct
+                  shares: 223986
+                  price_per_share: 231.42
+                  total_value: 51834840.12
+                  shares_owned_after: 3280042
+                  form_type: '4'
+                  is_amendment: false
+                  original_filing_date: null
+                  accession_number: 0000320193-26-000090
+                  filing_url: https://www.sec.gov/Archives/edgar/data/...
+                  filing_date: '2026-08-06'
+        '400':
+          description: Bad request (invalid or unsupported parameter)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '401':
+          description: Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '402':
+          description: Insufficient credits
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '404':
+          description: Ticker not found, market not covered, or dataset not available
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '429':
+          description: Rate limited
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '503':
+          description: Service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+  /api/v2/institutional-holdings:
+    get:
+      operationId: publicDataV2InstitutionalHoldings
+      tags:
+      - Ownership
+      summary: Get self-parsed institutional holdings
+      description: 'Query institutional investors’ reported quarterly holdings, quantities and market values. Each row is one holding record from an SEC 13F-HR filing or amendment, rather than an aggregated institution–security position.
+
+
+        Example request: `GET /api/v2/institutional-holdings?investor_cik=0001067983&report_period=2026-06-30`'
+      security:
+      - ApiKeyAuth: []
+      x-credits: 0.02 cr per call
+      x-refresh: daily 05:00 UTC plus weekly replay
+      parameters:
+      - name: ticker
+        in: query
+        required: false
+        description: One of ticker, investor_cik is required.
+        style: form
+        explode: false
+        schema:
+          type: array
+          items:
+            type: string
+          minItems: 1
+          maxItems: 1
+      - name: investor_cik
+        in: query
+        required: false
+        description: One of ticker, investor_cik is required.
+        schema:
+          type: string
+      - name: report_period
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 500
+          default: 50
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+      responses:
+        '200':
+          description: Successful Public Data API response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PublicInstitutionalHoldingsItem'
+                required:
+                - data
+                additionalProperties: false
+              example:
+                data:
+                - ticker: null
+                  investor_name: Berkshire Hathaway Inc
+                  investor_cik: 0001067983
+                  report_period: '2026-06-30'
+                  shares: 12561737
+                  market_value: 577211815
+                  change_in_shares: -157938
+                  accession_number: 0001193125-26-352200
+                  form_type: 13F-HR
+                  filing_url: https://www.sec.gov/Archives/edgar/data/1067983/000119312526352200/0001193125-26-352200.txt
+                  filing_date: '2026-08-14'
+        '400':
+          description: Bad request (invalid or unsupported parameter)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '401':
+          description: Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '402':
+          description: Insufficient credits
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '404':
+          description: Ticker not found, market not covered, or dataset not available
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '429':
+          description: Rate limited
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '503':
+          description: Service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+components:
+  schemas:
+    PublicInstitutionalHoldingsItem:
+      type: object
+      properties:
+        ticker:
+          anyOf:
+          - type: string
+          - type: 'null'
+        investor_name:
+          type: string
+        investor_cik:
+          type: string
+        report_period:
+          type: string
+          format: date
+        shares:
+          type: number
+        market_value:
+          type: number
+        change_in_shares:
+          type: number
+        accession_number:
+          type: string
+        form_type:
+          type: string
+        filing_url:
+          type: string
+          format: uri
+        filing_date:
+          type: string
+          format: date
+      required:
+      - ticker
+      - investor_name
+      - investor_cik
+      - report_period
+      - shares
+      - market_value
+      - change_in_shares
+      - accession_number
+      - form_type
+      - filing_url
+      - filing_date
+      additionalProperties: false
+    PublicDataError:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+      required:
+      - error
+      - message
+    PublicInsiderTradesItem:
+      type: object
+      properties:
+        ticker:
+          type: string
+        insider_name:
+          type: string
+        insider_title:
+          type: string
+        is_director:
+          type: boolean
+        is_officer:
+          type: boolean
+        record_type:
+          type: string
+          enum:
+          - initial_holding
+          - transaction
+        transaction_type:
+          type: string
+          enum:
+          - buy
+          - sell
+          - award
+          - exercise
+          - tax_withholding
+          - other
+        transaction_code:
+          type: string
+        transaction_date:
+          type: string
+          format: date
+        security_title:
+          type: string
+        ownership_type:
+          type: string
+        shares:
+          type: number
+        price_per_share:
+          type: number
+        total_value:
+          type: number
+        shares_owned_after:
+          type: number
+        form_type:
+          type: string
+          enum:
+          - '3'
+          - 3/A
+          - '4'
+          - 4/A
+          - '5'
+          - 5/A
+        is_amendment:
+          type: boolean
+        original_filing_date:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+        accession_number:
+          type: string
+        filing_url:
+          type: string
+          format: uri
+        filing_date:
+          type: string
+          format: date
+      required:
+      - ticker
+      - insider_name
+      - insider_title
+      - is_director
+      - is_officer
+      - record_type
+      - transaction_type
+      - transaction_code
+      - transaction_date
+      - security_title
+      - ownership_type
+      - shares
+      - price_per_share
+      - total_value
+      - shares_owned_after
+      - form_type
+      - is_amendment
+      - original_filing_date
+      - accession_number
+      - filing_url
+      - filing_date
+      additionalProperties: false
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-KEY
+externalDocs:
+  description: API reference
+  url: https://drillr.ai/docs/api

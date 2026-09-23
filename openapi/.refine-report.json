@@ -1,0 +1,40 @@
+{
+  "provider": "drillr",
+  "sources": [
+    "_original/drillr-openapi.json"
+  ],
+  "outputs": [
+    "drillr-analyst-api-openapi.yml",
+    "drillr-company-api-openapi.yml",
+    "drillr-contract-api-openapi.yml",
+    "drillr-earnings-api-openapi.yml",
+    "drillr-events-api-openapi.yml",
+    "drillr-executives-api-openapi.yml",
+    "drillr-filings-api-openapi.yml",
+    "drillr-financials-api-openapi.yml",
+    "drillr-ownership-api-openapi.yml",
+    "drillr-prices-api-openapi.yml",
+    "drillr-signal-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [
+    "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
+    "drillr-openapi.json: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "apis.yml register: already-registered"
+  ],
+  "skipped": [
+    "drillr-analyst-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "drillr-company-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "drillr-contract-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "drillr-earnings-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "drillr-events-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "drillr-executives-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "drillr-filings-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "drillr-financials-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "drillr-ownership-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "drillr-prices-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "drillr-signal-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
+}

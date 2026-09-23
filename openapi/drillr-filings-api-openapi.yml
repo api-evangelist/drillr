@@ -1,0 +1,357 @@
+openapi: 3.2.0
+info:
+  title: drillr Public Data Filings API
+  version: 2.0.0-spec.110
+  description: 'REST endpoints over the same tables the drillr app runs on: fundamentals, filings, earnings, ownership, events, executives, analyst data and news for US, Japan and China equities.'
+  termsOfService: https://drillr.ai/legal/terms
+  contact:
+    name: drillr developer support
+    url: https://drillr.ai/docs
+    email: support@lil-grebe.com
+  license:
+    name: drillr Terms of Service
+    url: https://drillr.ai/legal/terms
+  x-logo:
+    url: https://drillr.ai/images/brand/logo_512_optimized.png
+    altText: drillr
+servers:
+- url: https://gateway.drillr.ai
+security:
+- ApiKeyAuth: []
+tags:
+- name: Filings
+  description: Regulatory filing lists and full-text filing search (US, Japan, China)
+paths:
+  /api/v2/filings:
+    get:
+      operationId: publicDataV2Filings
+      tags:
+      - Filings
+      summary: List retained regulatory filings
+      description: 'Returns a company''s filings, one row per filing, with the form type, filing date and a link to the official document. Ordered by `filing_date` descending, then `accession_number` descending for the same day. Covers the last 5 years for US and the last 3 years of financial reports for JP / CN; there are no date or form-type parameters and no market-wide scan — every filing for that company inside the window comes back together. Filter for annual or quarterly reports yourself on the `form_type` field of the returned rows.
+
+
+        Example request: `GET /api/v2/filings?ticker=AAPL&limit=20`'
+      security:
+      - ApiKeyAuth: []
+      x-credits: 0.02 cr per call
+      x-refresh: US 5m; JP 15-30m; CN daily 16:00 UTC
+      parameters:
+      - name: ticker
+        in: query
+        required: true
+        style: form
+        explode: false
+        schema:
+          type: array
+          items:
+            type: string
+          minItems: 1
+          maxItems: 10
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 500
+          default: 50
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+      responses:
+        '200':
+          description: Successful Public Data API response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PublicFilingsItem'
+                required:
+                - data
+                additionalProperties: false
+              example:
+                data:
+                - ticker: AAPL
+                  market: US
+                  form_type: '4'
+                  title: null
+                  filing_date: '2026-02-03'
+                  period_of_report: null
+                  accession_number: 0001216519-26-000002
+                  filing_url: https://www.sec.gov/Archives/edgar/data/320193/000121651926000002/0001216519-26-000002.txt
+                - ticker: AAPL
+                  market: US
+                  form_type: 10-K
+                  title: Annual report for fiscal year ended September 27, 2025
+                  filing_date: '2025-10-31'
+                  period_of_report: '2025-09-27'
+                  accession_number: 0000320193-25-000079
+                  filing_url: https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/0000320193-25-000079.txt
+        '400':
+          description: Bad request (invalid or unsupported parameter)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '401':
+          description: Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '402':
+          description: Insufficient credits
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '404':
+          description: Ticker not found, market not covered, or dataset not available
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '429':
+          description: Rate limited
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '503':
+          description: Service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+  /api/v2/filing-search:
+    get:
+      operationId: publicDataV2FilingSearch
+      tags:
+      - Filings
+      summary: Search retained filing text for one company
+      description: 'Search SEC filings and Chinese and Japanese financial reports for facts buried in footnotes, tables and narrative disclosures. Semantic and keyword search returns original passages with filing context.
+
+
+        Example request: `GET /api/v2/filing-search?ticker=AAPL&query=share+repurchase&form_type=10-K&from=2025-01&to=2025-12`'
+      security:
+      - ApiKeyAuth: []
+      x-credits: 0.1 cr per call
+      x-refresh: US 5m; JP 15-30m; CN daily 16:00 UTC
+      parameters:
+      - name: query
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: ticker
+        in: query
+        required: true
+        style: form
+        explode: false
+        schema:
+          type: array
+          items:
+            type: string
+          minItems: 1
+          maxItems: 1
+      - name: form_type
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: from
+        in: query
+        required: false
+        schema:
+          type: string
+          pattern: ^\d{4}-(0[1-9]|1[0-2])$
+      - name: to
+        in: query
+        required: false
+        schema:
+          type: string
+          pattern: ^\d{4}-(0[1-9]|1[0-2])$
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 50
+          default: 10
+      responses:
+        '200':
+          description: Successful Public Data API response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PublicFilingSearchItem'
+                required:
+                - data
+                additionalProperties: false
+              example:
+                data:
+                - ticker: AAPL
+                  market: US
+                  form_type: 10-K
+                  filing_date: '2025-10-31'
+                  language: en
+                  section: Share Repurchase Program
+                  snippet: Share Repurchase Program During 2025, the Company repurchased 402 million shares of its common stock for $89.3 billion…
+                  score: 0.0472
+        '400':
+          description: Bad request (invalid or unsupported parameter)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '401':
+          description: Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '402':
+          description: Insufficient credits
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '404':
+          description: Ticker not found, market not covered, or dataset not available
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '429':
+          description: Rate limited
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+        '503':
+          description: Service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDataError'
+components:
+  schemas:
+    PublicDataError:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+      required:
+      - error
+      - message
+    PublicFilingsItem:
+      type: object
+      properties:
+        ticker:
+          type: string
+        market:
+          type: string
+          enum:
+          - US
+          - CN
+          - JP
+        form_type:
+          type: string
+        title:
+          anyOf:
+          - type: string
+          - type: 'null'
+        filing_date:
+          type: string
+          format: date
+        period_of_report:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+        accession_number:
+          type: string
+        filing_url:
+          type: string
+          format: uri
+      required:
+      - ticker
+      - market
+      - form_type
+      - title
+      - filing_date
+      - period_of_report
+      - accession_number
+      - filing_url
+      additionalProperties: false
+    PublicFilingSearchItem:
+      type: object
+      properties:
+        ticker:
+          type: string
+        market:
+          type: string
+          enum:
+          - US
+          - CN
+          - JP
+        form_type:
+          type: string
+        filing_date:
+          type: string
+          format: date
+        language:
+          type: string
+        section:
+          type: string
+        snippet:
+          type: string
+        score:
+          type: number
+      required:
+      - ticker
+      - market
+      - form_type
+      - filing_date
+      - language
+      - section
+      - snippet
+      - score
+      additionalProperties: false
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-KEY
+externalDocs:
+  description: API reference
+  url: https://drillr.ai/docs/api

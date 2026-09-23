@@ -1,0 +1,29 @@
+# Front Door AI Index — drillr — 2026-09-17
+# AI vocabulary counted on the provider's root page. Generated; do not edit.
+# `score` is null unless ownership is `own` — see front_door_ai.py.
+front_door_ai:
+  slug: drillr
+  lexicon_version: '1.0'
+  probed_at: '2026-09-17'
+  host: drillr.ai
+  final_host: drillr.ai
+  ownership: own
+  owner: drillr
+  shares_host_with: null
+  inherited_from: null
+  verdict: scored
+  score: 12
+  host_score: 12
+  density: 9.43
+  words: 1272
+  tiers:
+    agentic: 2
+    core: 9
+    model: 1
+  ambiguous: 2
+  top_terms:
+    AI: 8
+    MCP: 2
+    agent: 2
+    Claude: 1
+    LLMs: 1

@@ -1,0 +1,48 @@
+openapi: 3.2.0
+info:
+  title: drillr Public Data Contract API
+  version: 2.0.0-spec.110
+  description: 'REST endpoints over the same tables the drillr app runs on: fundamentals, filings, earnings, ownership, events, executives, analyst data and news for US, Japan and China equities.'
+  termsOfService: https://drillr.ai/legal/terms
+  contact:
+    name: drillr developer support
+    url: https://drillr.ai/docs
+    email: support@lil-grebe.com
+  license:
+    name: drillr Terms of Service
+    url: https://drillr.ai/legal/terms
+  x-logo:
+    url: https://drillr.ai/images/brand/logo_512_optimized.png
+    altText: drillr
+servers:
+- url: https://gateway.drillr.ai
+security:
+- ApiKeyAuth: []
+tags:
+- name: Contract
+  description: The machine-readable API contract itself
+paths:
+  /api/v2/openapi.json:
+    get:
+      operationId: getPublicDataV2OpenApi
+      tags:
+      - Contract
+      summary: Download the machine-readable API contract
+      description: Unauthenticated. Also reachable at https://gateway.drillr.ai/openapi.json and https://drillr.ai/openapi.json, which redirect here.
+      security: []
+      responses:
+        '200':
+          description: OpenAPI 3.1 document
+          content:
+            application/json:
+              schema:
+                type: object
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-KEY
+externalDocs:
+  description: API reference
+  url: https://drillr.ai/docs/api
