@@ -1,4 +1,4 @@
-name: drillr Public Data API
+name: drillr
 description: >-
   drillr is a financial data and research API for the US, China and Japan. It provides financial statements, full-text
   filing search, natural-language company discovery, and research signals extracted from filings, news and earnings
@@ -19,7 +19,7 @@ tags:
   - Analyst Ratings
   - news-signals
   - MCP
-  - agent-native
+  - Agent-Native
 tags_raw:
   - financial-data
   - equities
@@ -50,7 +50,7 @@ apis:
   - Analyst Ratings
   - news-signals
   - MCP
-  - agent-native
+  - Agent-Native
   tags_raw:
   - financial-data
   - equities
@@ -181,9 +181,10 @@ apis:
   humanURL: https://drillr.ai/docs/api
   baseURL: https://gateway.drillr.ai/api/v2
   tags:
-  - Financial
+  - Finance
   tags_raw:
   - Financials
+  - Financial
   properties:
   - type: OpenAPI
     url: openapi/drillr-financials-api-openapi.yml

@@ -246,16 +246,6 @@ paths:
                 $ref: '#/components/schemas/PublicDataError'
 components:
   schemas:
-    PublicDataError:
-      type: object
-      properties:
-        error:
-          type: string
-        message:
-          type: string
-      required:
-      - error
-      - message
     PublicAnalystConsensusItem:
       type: object
       properties:
@@ -297,6 +287,16 @@ components:
       - price_target_low
       - price_target_count
       additionalProperties: false
+    PublicDataError:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+      required:
+      - error
+      - message
     PublicAnalystRatingsItem:
       type: object
       properties:

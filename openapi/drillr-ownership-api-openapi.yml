@@ -333,6 +333,16 @@ paths:
                 $ref: '#/components/schemas/PublicDataError'
 components:
   schemas:
+    PublicDataError:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+      required:
+      - error
+      - message
     PublicInstitutionalHoldingsItem:
       type: object
       properties:
@@ -376,16 +386,6 @@ components:
       - filing_url
       - filing_date
       additionalProperties: false
-    PublicDataError:
-      type: object
-      properties:
-        error:
-          type: string
-        message:
-          type: string
-      required:
-      - error
-      - message
     PublicInsiderTradesItem:
       type: object
       properties:

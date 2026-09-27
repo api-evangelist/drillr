@@ -226,16 +226,52 @@ paths:
                 $ref: '#/components/schemas/PublicDataError'
 components:
   schemas:
-    PublicDataError:
+    PublicExecutivesItem:
       type: object
       properties:
-        error:
+        ticker:
           type: string
-        message:
+        name:
           type: string
+        title:
+          type: string
+        role_type:
+          type: string
+        start_date:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+        end_date:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+        is_current:
+          type: boolean
+        accession_number:
+          type: string
+        form_type:
+          type: string
+        filing_url:
+          type: string
+          format: uri
+        filing_date:
+          type: string
+          format: date
       required:
-      - error
-      - message
+      - ticker
+      - name
+      - title
+      - role_type
+      - start_date
+      - end_date
+      - is_current
+      - accession_number
+      - form_type
+      - filing_url
+      - filing_date
+      additionalProperties: false
     PublicExecutiveCompensationItem:
       type: object
       properties:
@@ -291,52 +327,16 @@ components:
       - filing_url
       - filing_date
       additionalProperties: false
-    PublicExecutivesItem:
+    PublicDataError:
       type: object
       properties:
-        ticker:
+        error:
           type: string
-        name:
+        message:
           type: string
-        title:
-          type: string
-        role_type:
-          type: string
-        start_date:
-          anyOf:
-          - type: string
-            format: date
-          - type: 'null'
-        end_date:
-          anyOf:
-          - type: string
-            format: date
-          - type: 'null'
-        is_current:
-          type: boolean
-        accession_number:
-          type: string
-        form_type:
-          type: string
-        filing_url:
-          type: string
-          format: uri
-        filing_date:
-          type: string
-          format: date
       required:
-      - ticker
-      - name
-      - title
-      - role_type
-      - start_date
-      - end_date
-      - is_current
-      - accession_number
-      - form_type
-      - filing_url
-      - filing_date
-      additionalProperties: false
+      - error
+      - message
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

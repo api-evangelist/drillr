@@ -752,6 +752,552 @@ paths:
                 $ref: '#/components/schemas/PublicDataError'
 components:
   schemas:
+    PublicIncomeStatementsItem:
+      type: object
+      properties:
+        ticker:
+          type: string
+        market:
+          type: string
+          enum:
+          - US
+          - CN
+          - JP
+        fiscal_year:
+          type: integer
+        period:
+          type: string
+          enum:
+          - FY
+          - Q1
+          - Q2
+          - Q3
+          - Q4
+        period_start:
+          type: string
+          format: date
+        report_period:
+          type: string
+          format: date
+        currency:
+          type: string
+        accounting_standard:
+          type: string
+        accession_number:
+          type: string
+        form_type:
+          type: string
+        filing_url:
+          type: string
+          format: uri
+        filing_date:
+          type: string
+          format: date
+        derived_fields:
+          type: array
+          items:
+            type: string
+        derivation:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/StatementCalculationNode'
+        revenue:
+          type: number
+        cost_of_revenue:
+          type: number
+        gross_profit:
+          type: number
+        research_and_development_expense:
+          type: number
+        selling_and_marketing_expense:
+          anyOf:
+          - type: number
+          - type: 'null'
+        general_and_administrative_expense:
+          type: number
+        selling_general_and_administrative_expense:
+          anyOf:
+          - type: number
+          - type: 'null'
+        taxes_and_surcharges:
+          anyOf:
+          - type: number
+          - type: 'null'
+        operating_expenses:
+          anyOf:
+          - type: number
+          - type: 'null'
+        operating_income:
+          type: number
+        interest_income:
+          anyOf:
+          - type: number
+          - type: 'null'
+        interest_expense:
+          anyOf:
+          - type: number
+          - type: 'null'
+        other_non_operating_income:
+          anyOf:
+          - type: number
+          - type: 'null'
+        ordinary_income:
+          anyOf:
+          - type: number
+          - type: 'null'
+        extraordinary_gains:
+          anyOf:
+          - type: number
+          - type: 'null'
+        extraordinary_losses:
+          anyOf:
+          - type: number
+          - type: 'null'
+        pretax_income:
+          type: number
+        income_tax_expense:
+          type: number
+        net_income:
+          anyOf:
+          - type: number
+          - type: 'null'
+        net_income_attributable_to_parent:
+          type: number
+        net_income_attributable_to_noncontrolling_interests:
+          anyOf:
+          - type: number
+          - type: 'null'
+        depreciation_and_amortization:
+          anyOf:
+          - type: number
+          - type: 'null'
+        share_based_compensation:
+          type: number
+        eps_basic:
+          anyOf:
+          - type: number
+          - type: 'null'
+        eps_diluted:
+          anyOf:
+          - type: number
+          - type: 'null'
+        dividend_per_share:
+          type: number
+        weighted_average_shares_basic:
+          type: number
+        weighted_average_shares_diluted:
+          anyOf:
+          - type: number
+          - type: 'null'
+        ebitda:
+          anyOf:
+          - type: number
+          - type: 'null'
+      required:
+      - ticker
+      - market
+      - fiscal_year
+      - period
+      - period_start
+      - report_period
+      - currency
+      - accounting_standard
+      - accession_number
+      - form_type
+      - filing_url
+      - filing_date
+      - derived_fields
+      - derivation
+      - revenue
+      - cost_of_revenue
+      - gross_profit
+      - research_and_development_expense
+      - selling_and_marketing_expense
+      - general_and_administrative_expense
+      - selling_general_and_administrative_expense
+      - taxes_and_surcharges
+      - operating_expenses
+      - operating_income
+      - interest_income
+      - interest_expense
+      - other_non_operating_income
+      - ordinary_income
+      - extraordinary_gains
+      - extraordinary_losses
+      - pretax_income
+      - income_tax_expense
+      - net_income
+      - net_income_attributable_to_parent
+      - net_income_attributable_to_noncontrolling_interests
+      - depreciation_and_amortization
+      - share_based_compensation
+      - eps_basic
+      - eps_diluted
+      - dividend_per_share
+      - weighted_average_shares_basic
+      - weighted_average_shares_diluted
+      - ebitda
+      additionalProperties: false
+    StatementCalculationNode:
+      oneOf:
+      - type: object
+        properties:
+          operation:
+            const: reported
+          metric:
+            type: string
+          value:
+            type: number
+          currency:
+            type:
+            - string
+            - 'null'
+          period_start:
+            type:
+            - string
+            - 'null'
+            format: date
+          report_period:
+            type:
+            - string
+            - 'null'
+            format: date
+          available_at:
+            type:
+            - string
+            - 'null'
+            format: date
+          accession_number:
+            type:
+            - string
+            - 'null'
+          form_type:
+            type:
+            - string
+            - 'null'
+          filing_url:
+            type: string
+            format: uri
+          filing_date:
+            type:
+            - string
+            - 'null'
+            format: date
+        required:
+        - operation
+        - metric
+        - value
+        - currency
+        - period_start
+        - report_period
+        - available_at
+        - accession_number
+        - form_type
+        - filing_url
+        - filing_date
+        additionalProperties: false
+      - type: object
+        properties:
+          operation:
+            type: string
+            enum:
+            - plus
+            - minus
+            - plus0
+            - minus0
+            - plus_minus
+            - confirm_minus2
+            - minus_same_vintage
+            - col
+            - col_if_null
+            - subtract
+            - annual_minus_three_quarters
+            - same_end_balance
+            - previous_end_cash
+            - negative_absolute
+            - negate
+          metric:
+            type: string
+          value:
+            type: number
+          currency:
+            type:
+            - string
+            - 'null'
+          period_start:
+            type:
+            - string
+            - 'null'
+            format: date
+          report_period:
+            type:
+            - string
+            - 'null'
+            format: date
+          available_at:
+            type:
+            - string
+            - 'null'
+            format: date
+          inputs:
+            type: array
+            minItems: 1
+            maxItems: 4
+            items:
+              anyOf:
+              - $ref: '#/components/schemas/StatementCalculationNode'
+              - type: 'null'
+        required:
+        - operation
+        - metric
+        - value
+        - currency
+        - period_start
+        - report_period
+        - available_at
+        - inputs
+        additionalProperties: false
+    PublicBalanceSheetsItem:
+      type: object
+      properties:
+        ticker:
+          type: string
+        market:
+          type: string
+          enum:
+          - US
+          - CN
+          - JP
+        fiscal_year:
+          type: integer
+        period:
+          type: string
+          enum:
+          - FY
+          - Q1
+          - Q2
+          - Q3
+          - Q4
+        period_start:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+        report_period:
+          type: string
+          format: date
+        currency:
+          type: string
+        accounting_standard:
+          type: string
+        accession_number:
+          type: string
+        form_type:
+          type: string
+        filing_url:
+          type: string
+          format: uri
+        filing_date:
+          type: string
+          format: date
+        derived_fields:
+          type: array
+          items:
+            type: string
+        derivation:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/StatementCalculationNode'
+        cash_and_cash_equivalents:
+          type: number
+        short_term_investments:
+          type: number
+        accounts_receivable:
+          anyOf:
+          - type: number
+          - type: 'null'
+        inventories:
+          type: number
+        prepaid_expenses:
+          anyOf:
+          - type: number
+          - type: 'null'
+        other_current_assets:
+          anyOf:
+          - type: number
+          - type: 'null'
+        current_assets:
+          type: number
+        property_plant_equipment:
+          anyOf:
+          - type: number
+          - type: 'null'
+        right_of_use_assets:
+          type: number
+        goodwill:
+          anyOf:
+          - type: number
+          - type: 'null'
+        intangible_assets:
+          type: number
+        long_term_investments:
+          anyOf:
+          - type: number
+          - type: 'null'
+        deferred_tax_assets:
+          anyOf:
+          - type: number
+          - type: 'null'
+        other_non_current_assets:
+          type: number
+        non_current_assets:
+          anyOf:
+          - type: number
+          - type: 'null'
+        total_assets:
+          type: number
+        accounts_payable:
+          type: number
+        short_term_debt:
+          anyOf:
+          - type: number
+          - type: 'null'
+        current_portion_of_long_term_debt:
+          anyOf:
+          - type: number
+          - type: 'null'
+        employee_compensation_payable:
+          anyOf:
+          - type: number
+          - type: 'null'
+        income_taxes_payable:
+          type: number
+        accrued_liabilities:
+          anyOf:
+          - type: number
+          - type: 'null'
+        deferred_revenue:
+          anyOf:
+          - type: number
+          - type: 'null'
+        other_current_liabilities:
+          anyOf:
+          - type: number
+          - type: 'null'
+        current_liabilities:
+          type: number
+        long_term_debt:
+          anyOf:
+          - type: number
+          - type: 'null'
+        lease_liabilities:
+          type: number
+        deferred_tax_liabilities:
+          type: number
+        other_non_current_liabilities:
+          anyOf:
+          - type: number
+          - type: 'null'
+        non_current_liabilities:
+          anyOf:
+          - type: number
+          - type: 'null'
+        total_liabilities:
+          type: number
+        common_stock:
+          type: number
+        additional_paid_in_capital:
+          anyOf:
+          - type: number
+          - type: 'null'
+        retained_earnings:
+          type: number
+        treasury_stock:
+          anyOf:
+          - type: number
+          - type: 'null'
+        accumulated_other_comprehensive_income:
+          anyOf:
+          - type: number
+          - type: 'null'
+        equity_attributable_to_parent:
+          type: number
+        noncontrolling_interests:
+          anyOf:
+          - type: number
+          - type: 'null'
+        total_equity:
+          type: number
+        temporary_equity:
+          anyOf:
+          - type: number
+          - type: 'null'
+        total_debt:
+          anyOf:
+          - type: number
+          - type: 'null'
+        net_debt:
+          anyOf:
+          - type: number
+          - type: 'null'
+      required:
+      - ticker
+      - market
+      - fiscal_year
+      - period
+      - period_start
+      - report_period
+      - currency
+      - accounting_standard
+      - accession_number
+      - form_type
+      - filing_url
+      - filing_date
+      - derived_fields
+      - derivation
+      - cash_and_cash_equivalents
+      - short_term_investments
+      - accounts_receivable
+      - inventories
+      - prepaid_expenses
+      - other_current_assets
+      - current_assets
+      - property_plant_equipment
+      - right_of_use_assets
+      - goodwill
+      - intangible_assets
+      - long_term_investments
+      - deferred_tax_assets
+      - other_non_current_assets
+      - non_current_assets
+      - total_assets
+      - accounts_payable
+      - short_term_debt
+      - current_portion_of_long_term_debt
+      - employee_compensation_payable
+      - income_taxes_payable
+      - accrued_liabilities
+      - deferred_revenue
+      - other_current_liabilities
+      - current_liabilities
+      - long_term_debt
+      - lease_liabilities
+      - deferred_tax_liabilities
+      - other_non_current_liabilities
+      - non_current_liabilities
+      - total_liabilities
+      - common_stock
+      - additional_paid_in_capital
+      - retained_earnings
+      - treasury_stock
+      - accumulated_other_comprehensive_income
+      - equity_attributable_to_parent
+      - noncontrolling_interests
+      - total_equity
+      - temporary_equity
+      - total_debt
+      - net_debt
+      additionalProperties: false
     PublicFinancialMetricsSnapshotItem:
       type: object
       properties:
@@ -1088,366 +1634,6 @@ components:
       - interest_paid
       - free_cash_flow
       additionalProperties: false
-    PublicBalanceSheetsItem:
-      type: object
-      properties:
-        ticker:
-          type: string
-        market:
-          type: string
-          enum:
-          - US
-          - CN
-          - JP
-        fiscal_year:
-          type: integer
-        period:
-          type: string
-          enum:
-          - FY
-          - Q1
-          - Q2
-          - Q3
-          - Q4
-        period_start:
-          anyOf:
-          - type: string
-            format: date
-          - type: 'null'
-        report_period:
-          type: string
-          format: date
-        currency:
-          type: string
-        accounting_standard:
-          type: string
-        accession_number:
-          type: string
-        form_type:
-          type: string
-        filing_url:
-          type: string
-          format: uri
-        filing_date:
-          type: string
-          format: date
-        derived_fields:
-          type: array
-          items:
-            type: string
-        derivation:
-          type: object
-          additionalProperties:
-            $ref: '#/components/schemas/StatementCalculationNode'
-        cash_and_cash_equivalents:
-          type: number
-        short_term_investments:
-          type: number
-        accounts_receivable:
-          anyOf:
-          - type: number
-          - type: 'null'
-        inventories:
-          type: number
-        prepaid_expenses:
-          anyOf:
-          - type: number
-          - type: 'null'
-        other_current_assets:
-          anyOf:
-          - type: number
-          - type: 'null'
-        current_assets:
-          type: number
-        property_plant_equipment:
-          anyOf:
-          - type: number
-          - type: 'null'
-        right_of_use_assets:
-          type: number
-        goodwill:
-          anyOf:
-          - type: number
-          - type: 'null'
-        intangible_assets:
-          type: number
-        long_term_investments:
-          anyOf:
-          - type: number
-          - type: 'null'
-        deferred_tax_assets:
-          anyOf:
-          - type: number
-          - type: 'null'
-        other_non_current_assets:
-          type: number
-        non_current_assets:
-          anyOf:
-          - type: number
-          - type: 'null'
-        total_assets:
-          type: number
-        accounts_payable:
-          type: number
-        short_term_debt:
-          anyOf:
-          - type: number
-          - type: 'null'
-        current_portion_of_long_term_debt:
-          anyOf:
-          - type: number
-          - type: 'null'
-        employee_compensation_payable:
-          anyOf:
-          - type: number
-          - type: 'null'
-        income_taxes_payable:
-          type: number
-        accrued_liabilities:
-          anyOf:
-          - type: number
-          - type: 'null'
-        deferred_revenue:
-          anyOf:
-          - type: number
-          - type: 'null'
-        other_current_liabilities:
-          anyOf:
-          - type: number
-          - type: 'null'
-        current_liabilities:
-          type: number
-        long_term_debt:
-          anyOf:
-          - type: number
-          - type: 'null'
-        lease_liabilities:
-          type: number
-        deferred_tax_liabilities:
-          type: number
-        other_non_current_liabilities:
-          anyOf:
-          - type: number
-          - type: 'null'
-        non_current_liabilities:
-          anyOf:
-          - type: number
-          - type: 'null'
-        total_liabilities:
-          type: number
-        common_stock:
-          type: number
-        additional_paid_in_capital:
-          anyOf:
-          - type: number
-          - type: 'null'
-        retained_earnings:
-          type: number
-        treasury_stock:
-          anyOf:
-          - type: number
-          - type: 'null'
-        accumulated_other_comprehensive_income:
-          anyOf:
-          - type: number
-          - type: 'null'
-        equity_attributable_to_parent:
-          type: number
-        noncontrolling_interests:
-          anyOf:
-          - type: number
-          - type: 'null'
-        total_equity:
-          type: number
-        temporary_equity:
-          anyOf:
-          - type: number
-          - type: 'null'
-        total_debt:
-          anyOf:
-          - type: number
-          - type: 'null'
-        net_debt:
-          anyOf:
-          - type: number
-          - type: 'null'
-      required:
-      - ticker
-      - market
-      - fiscal_year
-      - period
-      - period_start
-      - report_period
-      - currency
-      - accounting_standard
-      - accession_number
-      - form_type
-      - filing_url
-      - filing_date
-      - derived_fields
-      - derivation
-      - cash_and_cash_equivalents
-      - short_term_investments
-      - accounts_receivable
-      - inventories
-      - prepaid_expenses
-      - other_current_assets
-      - current_assets
-      - property_plant_equipment
-      - right_of_use_assets
-      - goodwill
-      - intangible_assets
-      - long_term_investments
-      - deferred_tax_assets
-      - other_non_current_assets
-      - non_current_assets
-      - total_assets
-      - accounts_payable
-      - short_term_debt
-      - current_portion_of_long_term_debt
-      - employee_compensation_payable
-      - income_taxes_payable
-      - accrued_liabilities
-      - deferred_revenue
-      - other_current_liabilities
-      - current_liabilities
-      - long_term_debt
-      - lease_liabilities
-      - deferred_tax_liabilities
-      - other_non_current_liabilities
-      - non_current_liabilities
-      - total_liabilities
-      - common_stock
-      - additional_paid_in_capital
-      - retained_earnings
-      - treasury_stock
-      - accumulated_other_comprehensive_income
-      - equity_attributable_to_parent
-      - noncontrolling_interests
-      - total_equity
-      - temporary_equity
-      - total_debt
-      - net_debt
-      additionalProperties: false
-    StatementCalculationNode:
-      oneOf:
-      - type: object
-        properties:
-          operation:
-            const: reported
-          metric:
-            type: string
-          value:
-            type: number
-          currency:
-            type:
-            - string
-            - 'null'
-          period_start:
-            type:
-            - string
-            - 'null'
-            format: date
-          report_period:
-            type:
-            - string
-            - 'null'
-            format: date
-          available_at:
-            type:
-            - string
-            - 'null'
-            format: date
-          accession_number:
-            type:
-            - string
-            - 'null'
-          form_type:
-            type:
-            - string
-            - 'null'
-          filing_url:
-            type: string
-            format: uri
-          filing_date:
-            type:
-            - string
-            - 'null'
-            format: date
-        required:
-        - operation
-        - metric
-        - value
-        - currency
-        - period_start
-        - report_period
-        - available_at
-        - accession_number
-        - form_type
-        - filing_url
-        - filing_date
-        additionalProperties: false
-      - type: object
-        properties:
-          operation:
-            type: string
-            enum:
-            - plus
-            - minus
-            - plus0
-            - minus0
-            - plus_minus
-            - confirm_minus2
-            - minus_same_vintage
-            - col
-            - col_if_null
-            - subtract
-            - annual_minus_three_quarters
-            - same_end_balance
-            - previous_end_cash
-            - negative_absolute
-            - negate
-          metric:
-            type: string
-          value:
-            type: number
-          currency:
-            type:
-            - string
-            - 'null'
-          period_start:
-            type:
-            - string
-            - 'null'
-            format: date
-          report_period:
-            type:
-            - string
-            - 'null'
-            format: date
-          available_at:
-            type:
-            - string
-            - 'null'
-            format: date
-          inputs:
-            type: array
-            minItems: 1
-            maxItems: 4
-            items:
-              anyOf:
-              - $ref: '#/components/schemas/StatementCalculationNode'
-              - type: 'null'
-        required:
-        - operation
-        - metric
-        - value
-        - currency
-        - period_start
-        - report_period
-        - available_at
-        - inputs
-        additionalProperties: false
     PublicDataError:
       type: object
       properties:
@@ -1458,192 +1644,6 @@ components:
       required:
       - error
       - message
-    PublicIncomeStatementsItem:
-      type: object
-      properties:
-        ticker:
-          type: string
-        market:
-          type: string
-          enum:
-          - US
-          - CN
-          - JP
-        fiscal_year:
-          type: integer
-        period:
-          type: string
-          enum:
-          - FY
-          - Q1
-          - Q2
-          - Q3
-          - Q4
-        period_start:
-          type: string
-          format: date
-        report_period:
-          type: string
-          format: date
-        currency:
-          type: string
-        accounting_standard:
-          type: string
-        accession_number:
-          type: string
-        form_type:
-          type: string
-        filing_url:
-          type: string
-          format: uri
-        filing_date:
-          type: string
-          format: date
-        derived_fields:
-          type: array
-          items:
-            type: string
-        derivation:
-          type: object
-          additionalProperties:
-            $ref: '#/components/schemas/StatementCalculationNode'
-        revenue:
-          type: number
-        cost_of_revenue:
-          type: number
-        gross_profit:
-          type: number
-        research_and_development_expense:
-          type: number
-        selling_and_marketing_expense:
-          anyOf:
-          - type: number
-          - type: 'null'
-        general_and_administrative_expense:
-          type: number
-        selling_general_and_administrative_expense:
-          anyOf:
-          - type: number
-          - type: 'null'
-        taxes_and_surcharges:
-          anyOf:
-          - type: number
-          - type: 'null'
-        operating_expenses:
-          anyOf:
-          - type: number
-          - type: 'null'
-        operating_income:
-          type: number
-        interest_income:
-          anyOf:
-          - type: number
-          - type: 'null'
-        interest_expense:
-          anyOf:
-          - type: number
-          - type: 'null'
-        other_non_operating_income:
-          anyOf:
-          - type: number
-          - type: 'null'
-        ordinary_income:
-          anyOf:
-          - type: number
-          - type: 'null'
-        extraordinary_gains:
-          anyOf:
-          - type: number
-          - type: 'null'
-        extraordinary_losses:
-          anyOf:
-          - type: number
-          - type: 'null'
-        pretax_income:
-          type: number
-        income_tax_expense:
-          type: number
-        net_income:
-          anyOf:
-          - type: number
-          - type: 'null'
-        net_income_attributable_to_parent:
-          type: number
-        net_income_attributable_to_noncontrolling_interests:
-          anyOf:
-          - type: number
-          - type: 'null'
-        depreciation_and_amortization:
-          anyOf:
-          - type: number
-          - type: 'null'
-        share_based_compensation:
-          type: number
-        eps_basic:
-          anyOf:
-          - type: number
-          - type: 'null'
-        eps_diluted:
-          anyOf:
-          - type: number
-          - type: 'null'
-        dividend_per_share:
-          type: number
-        weighted_average_shares_basic:
-          type: number
-        weighted_average_shares_diluted:
-          anyOf:
-          - type: number
-          - type: 'null'
-        ebitda:
-          anyOf:
-          - type: number
-          - type: 'null'
-      required:
-      - ticker
-      - market
-      - fiscal_year
-      - period
-      - period_start
-      - report_period
-      - currency
-      - accounting_standard
-      - accession_number
-      - form_type
-      - filing_url
-      - filing_date
-      - derived_fields
-      - derivation
-      - revenue
-      - cost_of_revenue
-      - gross_profit
-      - research_and_development_expense
-      - selling_and_marketing_expense
-      - general_and_administrative_expense
-      - selling_general_and_administrative_expense
-      - taxes_and_surcharges
-      - operating_expenses
-      - operating_income
-      - interest_income
-      - interest_expense
-      - other_non_operating_income
-      - ordinary_income
-      - extraordinary_gains
-      - extraordinary_losses
-      - pretax_income
-      - income_tax_expense
-      - net_income
-      - net_income_attributable_to_parent
-      - net_income_attributable_to_noncontrolling_interests
-      - depreciation_and_amortization
-      - share_based_compensation
-      - eps_basic
-      - eps_diluted
-      - dividend_per_share
-      - weighted_average_shares_basic
-      - weighted_average_shares_diluted
-      - ebitda
-      additionalProperties: false
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

@@ -263,16 +263,6 @@ paths:
                 $ref: '#/components/schemas/PublicDataError'
 components:
   schemas:
-    PublicDataError:
-      type: object
-      properties:
-        error:
-          type: string
-        message:
-          type: string
-      required:
-      - error
-      - message
     PublicFilingsItem:
       type: object
       properties:
@@ -313,6 +303,16 @@ components:
       - accession_number
       - filing_url
       additionalProperties: false
+    PublicDataError:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+      required:
+      - error
+      - message
     PublicFilingSearchItem:
       type: object
       properties:
