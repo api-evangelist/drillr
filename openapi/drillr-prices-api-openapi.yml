@@ -243,6 +243,16 @@ components:
       - date
       - price
       additionalProperties: false
+    PublicDataError:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+      required:
+      - error
+      - message
     PublicPricesHistoricalItem:
       type: object
       properties:
@@ -267,16 +277,6 @@ components:
       - low
       - close
       additionalProperties: false
-    PublicDataError:
-      type: object
-      properties:
-        error:
-          type: string
-        message:
-          type: string
-      required:
-      - error
-      - message
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

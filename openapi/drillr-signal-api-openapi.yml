@@ -571,109 +571,6 @@ components:
       - source_tickers
       - company_impacts
       additionalProperties: false
-    PublicEnterpriseAiAdoptionItem:
-      type: object
-      properties:
-        deployment_id:
-          type: string
-        application_id:
-          type: string
-        ticker:
-          type: string
-        company_name:
-          type: string
-        application_name:
-          type: string
-        first_report_date:
-          type: string
-          format: date
-        update_date:
-          type: string
-          format: date
-        summary:
-          type: string
-        evolution_summary:
-          type: string
-        business_position:
-          type: string
-        deployment_stage:
-          type: string
-        deployment_scope:
-          type: string
-        value_type:
-          type: string
-        metrics:
-          type: array
-          items:
-            type: object
-            properties:
-              metric_name:
-                type: string
-              value:
-                type: string
-              scope:
-                type: string
-              metric_role:
-                type: string
-              financial_metric:
-                type:
-                - string
-                - 'null'
-              financial_attribution:
-                type:
-                - string
-                - 'null'
-              evidence_id:
-                type: string
-            required:
-            - metric_name
-            - value
-            - scope
-            - metric_role
-            - financial_metric
-            - financial_attribution
-            - evidence_id
-            additionalProperties: false
-        evidence:
-          type: array
-          items:
-            type: object
-            properties:
-              evidence_id:
-                type: string
-              quote:
-                type: string
-              speaker:
-                type:
-                - string
-                - 'null'
-              section:
-                type:
-                - string
-                - 'null'
-            required:
-            - evidence_id
-            - quote
-            - speaker
-            - section
-            additionalProperties: false
-      required:
-      - deployment_id
-      - application_id
-      - ticker
-      - company_name
-      - application_name
-      - first_report_date
-      - update_date
-      - summary
-      - evolution_summary
-      - business_position
-      - deployment_stage
-      - deployment_scope
-      - value_type
-      - metrics
-      - evidence
-      additionalProperties: false
     PublicNewsSearchItem:
       type: object
       properties:
@@ -967,6 +864,109 @@ components:
       required:
       - error
       - message
+    PublicEnterpriseAiAdoptionItem:
+      type: object
+      properties:
+        deployment_id:
+          type: string
+        application_id:
+          type: string
+        ticker:
+          type: string
+        company_name:
+          type: string
+        application_name:
+          type: string
+        first_report_date:
+          type: string
+          format: date
+        update_date:
+          type: string
+          format: date
+        summary:
+          type: string
+        evolution_summary:
+          type: string
+        business_position:
+          type: string
+        deployment_stage:
+          type: string
+        deployment_scope:
+          type: string
+        value_type:
+          type: string
+        metrics:
+          type: array
+          items:
+            type: object
+            properties:
+              metric_name:
+                type: string
+              value:
+                type: string
+              scope:
+                type: string
+              metric_role:
+                type: string
+              financial_metric:
+                type:
+                - string
+                - 'null'
+              financial_attribution:
+                type:
+                - string
+                - 'null'
+              evidence_id:
+                type: string
+            required:
+            - metric_name
+            - value
+            - scope
+            - metric_role
+            - financial_metric
+            - financial_attribution
+            - evidence_id
+            additionalProperties: false
+        evidence:
+          type: array
+          items:
+            type: object
+            properties:
+              evidence_id:
+                type: string
+              quote:
+                type: string
+              speaker:
+                type:
+                - string
+                - 'null'
+              section:
+                type:
+                - string
+                - 'null'
+            required:
+            - evidence_id
+            - quote
+            - speaker
+            - section
+            additionalProperties: false
+      required:
+      - deployment_id
+      - application_id
+      - ticker
+      - company_name
+      - application_name
+      - first_report_date
+      - update_date
+      - summary
+      - evolution_summary
+      - business_position
+      - deployment_stage
+      - deployment_scope
+      - value_type
+      - metrics
+      - evidence
+      additionalProperties: false
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

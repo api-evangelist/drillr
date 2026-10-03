@@ -752,6 +752,137 @@ paths:
                 $ref: '#/components/schemas/PublicDataError'
 components:
   schemas:
+    PublicCashFlowStatementsItem:
+      type: object
+      properties:
+        ticker:
+          type: string
+        market:
+          type: string
+          enum:
+          - US
+          - CN
+          - JP
+        fiscal_year:
+          type: integer
+        period:
+          type: string
+          enum:
+          - FY
+          - Q1
+          - Q2
+          - Q3
+          - Q4
+        period_start:
+          type: string
+          format: date
+        report_period:
+          type: string
+          format: date
+        currency:
+          type: string
+        accounting_standard:
+          type: string
+        accession_number:
+          type: string
+        form_type:
+          type: string
+        filing_url:
+          type: string
+          format: uri
+        filing_date:
+          type: string
+          format: date
+        derived_fields:
+          type: array
+          items:
+            type: string
+        derivation:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/StatementCalculationNode'
+        operating_cash_flow:
+          type: number
+        change_in_working_capital:
+          anyOf:
+          - type: number
+          - type: 'null'
+        capital_expenditures:
+          anyOf:
+          - type: number
+          - type: 'null'
+        acquisitions_net:
+          anyOf:
+          - type: number
+          - type: 'null'
+        purchases_of_investments:
+          anyOf:
+          - type: number
+          - type: 'null'
+        proceeds_from_investments:
+          anyOf:
+          - type: number
+          - type: 'null'
+        investing_cash_flow:
+          type: number
+        share_repurchases:
+          anyOf:
+          - type: number
+          - type: 'null'
+        dividends_paid:
+          type: number
+        financing_cash_flow:
+          type: number
+        effect_of_exchange_rate_on_cash:
+          anyOf:
+          - type: number
+          - type: 'null'
+        net_change_in_cash:
+          type: number
+        cash_at_end_of_period:
+          type: number
+        income_taxes_paid:
+          type: number
+        interest_paid:
+          anyOf:
+          - type: number
+          - type: 'null'
+        free_cash_flow:
+          anyOf:
+          - type: number
+          - type: 'null'
+      required:
+      - ticker
+      - market
+      - fiscal_year
+      - period
+      - period_start
+      - report_period
+      - currency
+      - accounting_standard
+      - accession_number
+      - form_type
+      - filing_url
+      - filing_date
+      - derived_fields
+      - derivation
+      - operating_cash_flow
+      - change_in_working_capital
+      - capital_expenditures
+      - acquisitions_net
+      - purchases_of_investments
+      - proceeds_from_investments
+      - investing_cash_flow
+      - share_repurchases
+      - dividends_paid
+      - financing_cash_flow
+      - effect_of_exchange_rate_on_cash
+      - net_change_in_cash
+      - cash_at_end_of_period
+      - income_taxes_paid
+      - interest_paid
+      - free_cash_flow
+      additionalProperties: false
     PublicIncomeStatementsItem:
       type: object
       properties:
@@ -1057,6 +1188,221 @@ components:
         - available_at
         - inputs
         additionalProperties: false
+    PublicDataError:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+      required:
+      - error
+      - message
+    PublicFinancialMetricsSnapshotItem:
+      type: object
+      properties:
+        ticker:
+          type: string
+        market:
+          type: string
+          enum:
+          - US
+          - CN
+          - JP
+        currency:
+          type: string
+        shares_outstanding:
+          type: number
+        market_capitalization:
+          type: number
+        market_capitalization_usd:
+          type: number
+        enterprise_value:
+          type: number
+        pe_ratio_ttm:
+          type: number
+        peg_ratio_ttm:
+          type: number
+        pb_ratio_ttm:
+          type: number
+        ps_ratio_ttm:
+          type: number
+        pcf_ratio_ttm:
+          type: number
+        ev_to_sales_ttm:
+          type: number
+        ev_to_ebitda_ttm:
+          type: number
+        ev_to_ebit_ttm:
+          type: number
+        gross_profit_margin_ttm:
+          type: number
+        ebitda_margin_ttm:
+          type: number
+        net_income_margin_ttm:
+          type: number
+        fcf_margin_ttm:
+          type: number
+        roe_ttm:
+          type: number
+        roa_ttm:
+          type: number
+        roic_ttm:
+          type: number
+        revenue_growth_ttm:
+          type: number
+        eps_growth_ttm:
+          type: number
+        fcf_growth_ttm:
+          type: number
+        revenue_cagr_3y:
+          type: number
+        eps_cagr_3y:
+          type: number
+        dividend_yield_ttm:
+          type: number
+        payout_ratio_ttm:
+          type: number
+        dividend_growth_1y:
+          type: number
+        consecutive_dividend_years:
+          type: number
+        debt_to_equity:
+          type: number
+        net_debt_to_equity:
+          type: number
+        debt_to_assets:
+          type: number
+        debt_to_ebitda:
+          type: number
+        net_debt_to_ebitda:
+          type: number
+        interest_coverage:
+          type: number
+        ebitda_to_interest:
+          type: number
+        current_ratio:
+          type: number
+        quick_ratio:
+          type: number
+        cash_ratio:
+          type: number
+        working_capital:
+          type: number
+        operating_cash_flow_ratio:
+          type: number
+        fcf_to_debt:
+          type: number
+        ocf_to_debt:
+          type: number
+        ebit_margin_ttm:
+          type: number
+        capex_to_sales_ttm:
+          type: number
+        asset_turnover_ttm:
+          type: number
+        cash_per_share_ttm:
+          type: number
+        ebitda_growth_ttm:
+          type: number
+        ebit_growth_ttm:
+          type: number
+        ocf_growth_ttm:
+          type: number
+        ebitda_cagr_3y:
+          type: number
+        ebit_cagr_3y:
+          type: number
+        net_income_cagr_3y:
+          type: number
+        fcf_cagr_3y:
+          type: number
+        book_value_cagr_3y:
+          type: number
+        total_assets_cagr_3y:
+          type: number
+        dividend_rate_ttm:
+          type: number
+        fcf_payout_ratio_ttm:
+          type: number
+        dividend_cagr_3y:
+          type: number
+        dividend_frequency:
+          type: string
+        price_date:
+          type: string
+          format: date
+        statement_period_end:
+          type: string
+        statement_period:
+          type: string
+      required:
+      - ticker
+      - market
+      - currency
+      - shares_outstanding
+      - market_capitalization
+      - market_capitalization_usd
+      - enterprise_value
+      - pe_ratio_ttm
+      - peg_ratio_ttm
+      - pb_ratio_ttm
+      - ps_ratio_ttm
+      - pcf_ratio_ttm
+      - ev_to_sales_ttm
+      - ev_to_ebitda_ttm
+      - ev_to_ebit_ttm
+      - gross_profit_margin_ttm
+      - ebitda_margin_ttm
+      - net_income_margin_ttm
+      - fcf_margin_ttm
+      - roe_ttm
+      - roa_ttm
+      - roic_ttm
+      - revenue_growth_ttm
+      - eps_growth_ttm
+      - fcf_growth_ttm
+      - revenue_cagr_3y
+      - eps_cagr_3y
+      - dividend_yield_ttm
+      - payout_ratio_ttm
+      - dividend_growth_1y
+      - consecutive_dividend_years
+      - debt_to_equity
+      - net_debt_to_equity
+      - debt_to_assets
+      - debt_to_ebitda
+      - net_debt_to_ebitda
+      - interest_coverage
+      - ebitda_to_interest
+      - current_ratio
+      - quick_ratio
+      - cash_ratio
+      - working_capital
+      - operating_cash_flow_ratio
+      - fcf_to_debt
+      - ocf_to_debt
+      - ebit_margin_ttm
+      - capex_to_sales_ttm
+      - asset_turnover_ttm
+      - cash_per_share_ttm
+      - ebitda_growth_ttm
+      - ebit_growth_ttm
+      - ocf_growth_ttm
+      - ebitda_cagr_3y
+      - ebit_cagr_3y
+      - net_income_cagr_3y
+      - fcf_cagr_3y
+      - book_value_cagr_3y
+      - total_assets_cagr_3y
+      - dividend_rate_ttm
+      - fcf_payout_ratio_ttm
+      - dividend_cagr_3y
+      - dividend_frequency
+      - price_date
+      - statement_period_end
+      - statement_period
+      additionalProperties: false
     PublicBalanceSheetsItem:
       type: object
       properties:
@@ -1298,352 +1644,6 @@ components:
       - total_debt
       - net_debt
       additionalProperties: false
-    PublicFinancialMetricsSnapshotItem:
-      type: object
-      properties:
-        ticker:
-          type: string
-        market:
-          type: string
-          enum:
-          - US
-          - CN
-          - JP
-        currency:
-          type: string
-        shares_outstanding:
-          type: number
-        market_capitalization:
-          type: number
-        market_capitalization_usd:
-          type: number
-        enterprise_value:
-          type: number
-        pe_ratio_ttm:
-          type: number
-        peg_ratio_ttm:
-          type: number
-        pb_ratio_ttm:
-          type: number
-        ps_ratio_ttm:
-          type: number
-        pcf_ratio_ttm:
-          type: number
-        ev_to_sales_ttm:
-          type: number
-        ev_to_ebitda_ttm:
-          type: number
-        ev_to_ebit_ttm:
-          type: number
-        gross_profit_margin_ttm:
-          type: number
-        ebitda_margin_ttm:
-          type: number
-        net_income_margin_ttm:
-          type: number
-        fcf_margin_ttm:
-          type: number
-        roe_ttm:
-          type: number
-        roa_ttm:
-          type: number
-        roic_ttm:
-          type: number
-        revenue_growth_ttm:
-          type: number
-        eps_growth_ttm:
-          type: number
-        fcf_growth_ttm:
-          type: number
-        revenue_cagr_3y:
-          type: number
-        eps_cagr_3y:
-          type: number
-        dividend_yield_ttm:
-          type: number
-        payout_ratio_ttm:
-          type: number
-        dividend_growth_1y:
-          type: number
-        consecutive_dividend_years:
-          type: number
-        debt_to_equity:
-          type: number
-        net_debt_to_equity:
-          type: number
-        debt_to_assets:
-          type: number
-        debt_to_ebitda:
-          type: number
-        net_debt_to_ebitda:
-          type: number
-        interest_coverage:
-          type: number
-        ebitda_to_interest:
-          type: number
-        current_ratio:
-          type: number
-        quick_ratio:
-          type: number
-        cash_ratio:
-          type: number
-        working_capital:
-          type: number
-        operating_cash_flow_ratio:
-          type: number
-        fcf_to_debt:
-          type: number
-        ocf_to_debt:
-          type: number
-        ebit_margin_ttm:
-          type: number
-        capex_to_sales_ttm:
-          type: number
-        asset_turnover_ttm:
-          type: number
-        cash_per_share_ttm:
-          type: number
-        ebitda_growth_ttm:
-          type: number
-        ebit_growth_ttm:
-          type: number
-        ocf_growth_ttm:
-          type: number
-        ebitda_cagr_3y:
-          type: number
-        ebit_cagr_3y:
-          type: number
-        net_income_cagr_3y:
-          type: number
-        fcf_cagr_3y:
-          type: number
-        book_value_cagr_3y:
-          type: number
-        total_assets_cagr_3y:
-          type: number
-        dividend_rate_ttm:
-          type: number
-        fcf_payout_ratio_ttm:
-          type: number
-        dividend_cagr_3y:
-          type: number
-        dividend_frequency:
-          type: string
-        price_date:
-          type: string
-          format: date
-        statement_period_end:
-          type: string
-        statement_period:
-          type: string
-      required:
-      - ticker
-      - market
-      - currency
-      - shares_outstanding
-      - market_capitalization
-      - market_capitalization_usd
-      - enterprise_value
-      - pe_ratio_ttm
-      - peg_ratio_ttm
-      - pb_ratio_ttm
-      - ps_ratio_ttm
-      - pcf_ratio_ttm
-      - ev_to_sales_ttm
-      - ev_to_ebitda_ttm
-      - ev_to_ebit_ttm
-      - gross_profit_margin_ttm
-      - ebitda_margin_ttm
-      - net_income_margin_ttm
-      - fcf_margin_ttm
-      - roe_ttm
-      - roa_ttm
-      - roic_ttm
-      - revenue_growth_ttm
-      - eps_growth_ttm
-      - fcf_growth_ttm
-      - revenue_cagr_3y
-      - eps_cagr_3y
-      - dividend_yield_ttm
-      - payout_ratio_ttm
-      - dividend_growth_1y
-      - consecutive_dividend_years
-      - debt_to_equity
-      - net_debt_to_equity
-      - debt_to_assets
-      - debt_to_ebitda
-      - net_debt_to_ebitda
-      - interest_coverage
-      - ebitda_to_interest
-      - current_ratio
-      - quick_ratio
-      - cash_ratio
-      - working_capital
-      - operating_cash_flow_ratio
-      - fcf_to_debt
-      - ocf_to_debt
-      - ebit_margin_ttm
-      - capex_to_sales_ttm
-      - asset_turnover_ttm
-      - cash_per_share_ttm
-      - ebitda_growth_ttm
-      - ebit_growth_ttm
-      - ocf_growth_ttm
-      - ebitda_cagr_3y
-      - ebit_cagr_3y
-      - net_income_cagr_3y
-      - fcf_cagr_3y
-      - book_value_cagr_3y
-      - total_assets_cagr_3y
-      - dividend_rate_ttm
-      - fcf_payout_ratio_ttm
-      - dividend_cagr_3y
-      - dividend_frequency
-      - price_date
-      - statement_period_end
-      - statement_period
-      additionalProperties: false
-    PublicCashFlowStatementsItem:
-      type: object
-      properties:
-        ticker:
-          type: string
-        market:
-          type: string
-          enum:
-          - US
-          - CN
-          - JP
-        fiscal_year:
-          type: integer
-        period:
-          type: string
-          enum:
-          - FY
-          - Q1
-          - Q2
-          - Q3
-          - Q4
-        period_start:
-          type: string
-          format: date
-        report_period:
-          type: string
-          format: date
-        currency:
-          type: string
-        accounting_standard:
-          type: string
-        accession_number:
-          type: string
-        form_type:
-          type: string
-        filing_url:
-          type: string
-          format: uri
-        filing_date:
-          type: string
-          format: date
-        derived_fields:
-          type: array
-          items:
-            type: string
-        derivation:
-          type: object
-          additionalProperties:
-            $ref: '#/components/schemas/StatementCalculationNode'
-        operating_cash_flow:
-          type: number
-        change_in_working_capital:
-          anyOf:
-          - type: number
-          - type: 'null'
-        capital_expenditures:
-          anyOf:
-          - type: number
-          - type: 'null'
-        acquisitions_net:
-          anyOf:
-          - type: number
-          - type: 'null'
-        purchases_of_investments:
-          anyOf:
-          - type: number
-          - type: 'null'
-        proceeds_from_investments:
-          anyOf:
-          - type: number
-          - type: 'null'
-        investing_cash_flow:
-          type: number
-        share_repurchases:
-          anyOf:
-          - type: number
-          - type: 'null'
-        dividends_paid:
-          type: number
-        financing_cash_flow:
-          type: number
-        effect_of_exchange_rate_on_cash:
-          anyOf:
-          - type: number
-          - type: 'null'
-        net_change_in_cash:
-          type: number
-        cash_at_end_of_period:
-          type: number
-        income_taxes_paid:
-          type: number
-        interest_paid:
-          anyOf:
-          - type: number
-          - type: 'null'
-        free_cash_flow:
-          anyOf:
-          - type: number
-          - type: 'null'
-      required:
-      - ticker
-      - market
-      - fiscal_year
-      - period
-      - period_start
-      - report_period
-      - currency
-      - accounting_standard
-      - accession_number
-      - form_type
-      - filing_url
-      - filing_date
-      - derived_fields
-      - derivation
-      - operating_cash_flow
-      - change_in_working_capital
-      - capital_expenditures
-      - acquisitions_net
-      - purchases_of_investments
-      - proceeds_from_investments
-      - investing_cash_flow
-      - share_repurchases
-      - dividends_paid
-      - financing_cash_flow
-      - effect_of_exchange_rate_on_cash
-      - net_change_in_cash
-      - cash_at_end_of_period
-      - income_taxes_paid
-      - interest_paid
-      - free_cash_flow
-      additionalProperties: false
-    PublicDataError:
-      type: object
-      properties:
-        error:
-          type: string
-        message:
-          type: string
-      required:
-      - error
-      - message
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

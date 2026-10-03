@@ -345,22 +345,16 @@ paths:
                 $ref: '#/components/schemas/PublicDataError'
 components:
   schemas:
-    PublicCompanyDiscoveryItem:
+    PublicDataError:
       type: object
       properties:
-        ticker:
+        error:
           type: string
-        company_name:
-          anyOf:
-          - type: string
-          - type: 'null'
-        reason:
+        message:
           type: string
       required:
-      - ticker
-      - company_name
-      - reason
-      additionalProperties: false
+      - error
+      - message
     PublicTickersItem:
       type: object
       properties:
@@ -403,16 +397,22 @@ components:
       - exchange
       - identifiers
       additionalProperties: false
-    PublicDataError:
+    PublicCompanyDiscoveryItem:
       type: object
       properties:
-        error:
+        ticker:
           type: string
-        message:
+        company_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+        reason:
           type: string
       required:
-      - error
-      - message
+      - ticker
+      - company_name
+      - reason
+      additionalProperties: false
     PublicCompanyProfileItem:
       type: object
       properties:

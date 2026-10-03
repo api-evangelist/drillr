@@ -256,34 +256,6 @@ paths:
                 $ref: '#/components/schemas/PublicDataError'
 components:
   schemas:
-    PublicEarningsCalendarItem:
-      type: object
-      properties:
-        ticker:
-          type: string
-        date:
-          type: string
-          format: date
-        eps_actual:
-          type: number
-        eps_estimated:
-          type: number
-        revenue_actual:
-          type: number
-        revenue_estimated:
-          type: number
-        last_updated:
-          type: string
-          format: date
-      required:
-      - ticker
-      - date
-      - eps_actual
-      - eps_estimated
-      - revenue_actual
-      - revenue_estimated
-      - last_updated
-      additionalProperties: false
     PublicDataError:
       type: object
       properties:
@@ -335,6 +307,34 @@ components:
       - risks
       - segment_performance
       - qa_topics
+      additionalProperties: false
+    PublicEarningsCalendarItem:
+      type: object
+      properties:
+        ticker:
+          type: string
+        date:
+          type: string
+          format: date
+        eps_actual:
+          type: number
+        eps_estimated:
+          type: number
+        revenue_actual:
+          type: number
+        revenue_estimated:
+          type: number
+        last_updated:
+          type: string
+          format: date
+      required:
+      - ticker
+      - date
+      - eps_actual
+      - eps_estimated
+      - revenue_actual
+      - revenue_estimated
+      - last_updated
       additionalProperties: false
   securitySchemes:
     ApiKeyAuth:

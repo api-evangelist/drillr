@@ -246,47 +246,6 @@ paths:
                 $ref: '#/components/schemas/PublicDataError'
 components:
   schemas:
-    PublicAnalystConsensusItem:
-      type: object
-      properties:
-        ticker:
-          type: string
-        total_analysts:
-          type: integer
-        strong_buy:
-          type: integer
-        buy:
-          type: integer
-        hold:
-          type: integer
-        sell:
-          type: integer
-        strong_sell:
-          type: integer
-        consensus_rating:
-          type: string
-        price_target_consensus:
-          type: number
-        price_target_high:
-          type: number
-        price_target_low:
-          type: number
-        price_target_count:
-          type: integer
-      required:
-      - ticker
-      - total_analysts
-      - strong_buy
-      - buy
-      - hold
-      - sell
-      - strong_sell
-      - consensus_rating
-      - price_target_consensus
-      - price_target_high
-      - price_target_low
-      - price_target_count
-      additionalProperties: false
     PublicDataError:
       type: object
       properties:
@@ -353,6 +312,47 @@ components:
       - source_name
       - source_url
       - published_at
+      additionalProperties: false
+    PublicAnalystConsensusItem:
+      type: object
+      properties:
+        ticker:
+          type: string
+        total_analysts:
+          type: integer
+        strong_buy:
+          type: integer
+        buy:
+          type: integer
+        hold:
+          type: integer
+        sell:
+          type: integer
+        strong_sell:
+          type: integer
+        consensus_rating:
+          type: string
+        price_target_consensus:
+          type: number
+        price_target_high:
+          type: number
+        price_target_low:
+          type: number
+        price_target_count:
+          type: integer
+      required:
+      - ticker
+      - total_analysts
+      - strong_buy
+      - buy
+      - hold
+      - sell
+      - strong_sell
+      - consensus_rating
+      - price_target_consensus
+      - price_target_high
+      - price_target_low
+      - price_target_count
       additionalProperties: false
   securitySchemes:
     ApiKeyAuth:
