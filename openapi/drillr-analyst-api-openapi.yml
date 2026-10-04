@@ -246,16 +246,47 @@ paths:
                 $ref: '#/components/schemas/PublicDataError'
 components:
   schemas:
-    PublicDataError:
+    PublicAnalystConsensusItem:
       type: object
       properties:
-        error:
+        ticker:
           type: string
-        message:
+        total_analysts:
+          type: integer
+        strong_buy:
+          type: integer
+        buy:
+          type: integer
+        hold:
+          type: integer
+        sell:
+          type: integer
+        strong_sell:
+          type: integer
+        consensus_rating:
           type: string
+        price_target_consensus:
+          type: number
+        price_target_high:
+          type: number
+        price_target_low:
+          type: number
+        price_target_count:
+          type: integer
       required:
-      - error
-      - message
+      - ticker
+      - total_analysts
+      - strong_buy
+      - buy
+      - hold
+      - sell
+      - strong_sell
+      - consensus_rating
+      - price_target_consensus
+      - price_target_high
+      - price_target_low
+      - price_target_count
+      additionalProperties: false
     PublicAnalystRatingsItem:
       type: object
       properties:
@@ -313,47 +344,16 @@ components:
       - source_url
       - published_at
       additionalProperties: false
-    PublicAnalystConsensusItem:
+    PublicDataError:
       type: object
       properties:
-        ticker:
+        error:
           type: string
-        total_analysts:
-          type: integer
-        strong_buy:
-          type: integer
-        buy:
-          type: integer
-        hold:
-          type: integer
-        sell:
-          type: integer
-        strong_sell:
-          type: integer
-        consensus_rating:
+        message:
           type: string
-        price_target_consensus:
-          type: number
-        price_target_high:
-          type: number
-        price_target_low:
-          type: number
-        price_target_count:
-          type: integer
       required:
-      - ticker
-      - total_analysts
-      - strong_buy
-      - buy
-      - hold
-      - sell
-      - strong_sell
-      - consensus_rating
-      - price_target_consensus
-      - price_target_high
-      - price_target_low
-      - price_target_count
-      additionalProperties: false
+      - error
+      - message
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

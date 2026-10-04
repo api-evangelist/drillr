@@ -345,74 +345,6 @@ paths:
                 $ref: '#/components/schemas/PublicDataError'
 components:
   schemas:
-    PublicDataError:
-      type: object
-      properties:
-        error:
-          type: string
-        message:
-          type: string
-      required:
-      - error
-      - message
-    PublicTickersItem:
-      type: object
-      properties:
-        ticker:
-          type: string
-        market:
-          type: string
-          enum:
-          - US
-          - CN
-          - JP
-        name:
-          type: string
-        exchange:
-          type: string
-        identifiers:
-          type: object
-          properties:
-            isin:
-              type:
-              - string
-              - 'null'
-            cik:
-              type:
-              - string
-              - 'null'
-            cusip:
-              type:
-              - string
-              - 'null'
-          required:
-          - isin
-          - cik
-          - cusip
-          additionalProperties: false
-      required:
-      - ticker
-      - market
-      - name
-      - exchange
-      - identifiers
-      additionalProperties: false
-    PublicCompanyDiscoveryItem:
-      type: object
-      properties:
-        ticker:
-          type: string
-        company_name:
-          anyOf:
-          - type: string
-          - type: 'null'
-        reason:
-          type: string
-      required:
-      - ticker
-      - company_name
-      - reason
-      additionalProperties: false
     PublicCompanyProfileItem:
       type: object
       properties:
@@ -480,6 +412,74 @@ components:
       - listing_date
       - website
       - full_time_employees
+      - identifiers
+      additionalProperties: false
+    PublicCompanyDiscoveryItem:
+      type: object
+      properties:
+        ticker:
+          type: string
+        company_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+        reason:
+          type: string
+      required:
+      - ticker
+      - company_name
+      - reason
+      additionalProperties: false
+    PublicDataError:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+      required:
+      - error
+      - message
+    PublicTickersItem:
+      type: object
+      properties:
+        ticker:
+          type: string
+        market:
+          type: string
+          enum:
+          - US
+          - CN
+          - JP
+        name:
+          type: string
+        exchange:
+          type: string
+        identifiers:
+          type: object
+          properties:
+            isin:
+              type:
+              - string
+              - 'null'
+            cik:
+              type:
+              - string
+              - 'null'
+            cusip:
+              type:
+              - string
+              - 'null'
+          required:
+          - isin
+          - cik
+          - cusip
+          additionalProperties: false
+      required:
+      - ticker
+      - market
+      - name
+      - exchange
       - identifiers
       additionalProperties: false
   securitySchemes:

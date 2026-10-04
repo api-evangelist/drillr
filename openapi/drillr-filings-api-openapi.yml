@@ -263,16 +263,40 @@ paths:
                 $ref: '#/components/schemas/PublicDataError'
 components:
   schemas:
-    PublicDataError:
+    PublicFilingSearchItem:
       type: object
       properties:
-        error:
+        ticker:
           type: string
-        message:
+        market:
           type: string
+          enum:
+          - US
+          - CN
+          - JP
+        form_type:
+          type: string
+        filing_date:
+          type: string
+          format: date
+        language:
+          type: string
+        section:
+          type: string
+        snippet:
+          type: string
+        score:
+          type: number
       required:
-      - error
-      - message
+      - ticker
+      - market
+      - form_type
+      - filing_date
+      - language
+      - section
+      - snippet
+      - score
+      additionalProperties: false
     PublicFilingsItem:
       type: object
       properties:
@@ -313,40 +337,16 @@ components:
       - accession_number
       - filing_url
       additionalProperties: false
-    PublicFilingSearchItem:
+    PublicDataError:
       type: object
       properties:
-        ticker:
+        error:
           type: string
-        market:
+        message:
           type: string
-          enum:
-          - US
-          - CN
-          - JP
-        form_type:
-          type: string
-        filing_date:
-          type: string
-          format: date
-        language:
-          type: string
-        section:
-          type: string
-        snippet:
-          type: string
-        score:
-          type: number
       required:
-      - ticker
-      - market
-      - form_type
-      - filing_date
-      - language
-      - section
-      - snippet
-      - score
-      additionalProperties: false
+      - error
+      - message
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

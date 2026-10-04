@@ -752,137 +752,6 @@ paths:
                 $ref: '#/components/schemas/PublicDataError'
 components:
   schemas:
-    PublicCashFlowStatementsItem:
-      type: object
-      properties:
-        ticker:
-          type: string
-        market:
-          type: string
-          enum:
-          - US
-          - CN
-          - JP
-        fiscal_year:
-          type: integer
-        period:
-          type: string
-          enum:
-          - FY
-          - Q1
-          - Q2
-          - Q3
-          - Q4
-        period_start:
-          type: string
-          format: date
-        report_period:
-          type: string
-          format: date
-        currency:
-          type: string
-        accounting_standard:
-          type: string
-        accession_number:
-          type: string
-        form_type:
-          type: string
-        filing_url:
-          type: string
-          format: uri
-        filing_date:
-          type: string
-          format: date
-        derived_fields:
-          type: array
-          items:
-            type: string
-        derivation:
-          type: object
-          additionalProperties:
-            $ref: '#/components/schemas/StatementCalculationNode'
-        operating_cash_flow:
-          type: number
-        change_in_working_capital:
-          anyOf:
-          - type: number
-          - type: 'null'
-        capital_expenditures:
-          anyOf:
-          - type: number
-          - type: 'null'
-        acquisitions_net:
-          anyOf:
-          - type: number
-          - type: 'null'
-        purchases_of_investments:
-          anyOf:
-          - type: number
-          - type: 'null'
-        proceeds_from_investments:
-          anyOf:
-          - type: number
-          - type: 'null'
-        investing_cash_flow:
-          type: number
-        share_repurchases:
-          anyOf:
-          - type: number
-          - type: 'null'
-        dividends_paid:
-          type: number
-        financing_cash_flow:
-          type: number
-        effect_of_exchange_rate_on_cash:
-          anyOf:
-          - type: number
-          - type: 'null'
-        net_change_in_cash:
-          type: number
-        cash_at_end_of_period:
-          type: number
-        income_taxes_paid:
-          type: number
-        interest_paid:
-          anyOf:
-          - type: number
-          - type: 'null'
-        free_cash_flow:
-          anyOf:
-          - type: number
-          - type: 'null'
-      required:
-      - ticker
-      - market
-      - fiscal_year
-      - period
-      - period_start
-      - report_period
-      - currency
-      - accounting_standard
-      - accession_number
-      - form_type
-      - filing_url
-      - filing_date
-      - derived_fields
-      - derivation
-      - operating_cash_flow
-      - change_in_working_capital
-      - capital_expenditures
-      - acquisitions_net
-      - purchases_of_investments
-      - proceeds_from_investments
-      - investing_cash_flow
-      - share_repurchases
-      - dividends_paid
-      - financing_cash_flow
-      - effect_of_exchange_rate_on_cash
-      - net_change_in_cash
-      - cash_at_end_of_period
-      - income_taxes_paid
-      - interest_paid
-      - free_cash_flow
-      additionalProperties: false
     PublicIncomeStatementsItem:
       type: object
       properties:
@@ -1069,135 +938,6 @@ components:
       - weighted_average_shares_diluted
       - ebitda
       additionalProperties: false
-    StatementCalculationNode:
-      oneOf:
-      - type: object
-        properties:
-          operation:
-            const: reported
-          metric:
-            type: string
-          value:
-            type: number
-          currency:
-            type:
-            - string
-            - 'null'
-          period_start:
-            type:
-            - string
-            - 'null'
-            format: date
-          report_period:
-            type:
-            - string
-            - 'null'
-            format: date
-          available_at:
-            type:
-            - string
-            - 'null'
-            format: date
-          accession_number:
-            type:
-            - string
-            - 'null'
-          form_type:
-            type:
-            - string
-            - 'null'
-          filing_url:
-            type: string
-            format: uri
-          filing_date:
-            type:
-            - string
-            - 'null'
-            format: date
-        required:
-        - operation
-        - metric
-        - value
-        - currency
-        - period_start
-        - report_period
-        - available_at
-        - accession_number
-        - form_type
-        - filing_url
-        - filing_date
-        additionalProperties: false
-      - type: object
-        properties:
-          operation:
-            type: string
-            enum:
-            - plus
-            - minus
-            - plus0
-            - minus0
-            - plus_minus
-            - confirm_minus2
-            - minus_same_vintage
-            - col
-            - col_if_null
-            - subtract
-            - annual_minus_three_quarters
-            - same_end_balance
-            - previous_end_cash
-            - negative_absolute
-            - negate
-          metric:
-            type: string
-          value:
-            type: number
-          currency:
-            type:
-            - string
-            - 'null'
-          period_start:
-            type:
-            - string
-            - 'null'
-            format: date
-          report_period:
-            type:
-            - string
-            - 'null'
-            format: date
-          available_at:
-            type:
-            - string
-            - 'null'
-            format: date
-          inputs:
-            type: array
-            minItems: 1
-            maxItems: 4
-            items:
-              anyOf:
-              - $ref: '#/components/schemas/StatementCalculationNode'
-              - type: 'null'
-        required:
-        - operation
-        - metric
-        - value
-        - currency
-        - period_start
-        - report_period
-        - available_at
-        - inputs
-        additionalProperties: false
-    PublicDataError:
-      type: object
-      properties:
-        error:
-          type: string
-        message:
-          type: string
-      required:
-      - error
-      - message
     PublicFinancialMetricsSnapshotItem:
       type: object
       properties:
@@ -1402,6 +1142,256 @@ components:
       - price_date
       - statement_period_end
       - statement_period
+      additionalProperties: false
+    StatementCalculationNode:
+      oneOf:
+      - type: object
+        properties:
+          operation:
+            const: reported
+          metric:
+            type: string
+          value:
+            type: number
+          currency:
+            type:
+            - string
+            - 'null'
+          period_start:
+            type:
+            - string
+            - 'null'
+            format: date
+          report_period:
+            type:
+            - string
+            - 'null'
+            format: date
+          available_at:
+            type:
+            - string
+            - 'null'
+            format: date
+          accession_number:
+            type:
+            - string
+            - 'null'
+          form_type:
+            type:
+            - string
+            - 'null'
+          filing_url:
+            type: string
+            format: uri
+          filing_date:
+            type:
+            - string
+            - 'null'
+            format: date
+        required:
+        - operation
+        - metric
+        - value
+        - currency
+        - period_start
+        - report_period
+        - available_at
+        - accession_number
+        - form_type
+        - filing_url
+        - filing_date
+        additionalProperties: false
+      - type: object
+        properties:
+          operation:
+            type: string
+            enum:
+            - plus
+            - minus
+            - plus0
+            - minus0
+            - plus_minus
+            - confirm_minus2
+            - minus_same_vintage
+            - col
+            - col_if_null
+            - subtract
+            - annual_minus_three_quarters
+            - same_end_balance
+            - previous_end_cash
+            - negative_absolute
+            - negate
+          metric:
+            type: string
+          value:
+            type: number
+          currency:
+            type:
+            - string
+            - 'null'
+          period_start:
+            type:
+            - string
+            - 'null'
+            format: date
+          report_period:
+            type:
+            - string
+            - 'null'
+            format: date
+          available_at:
+            type:
+            - string
+            - 'null'
+            format: date
+          inputs:
+            type: array
+            minItems: 1
+            maxItems: 4
+            items:
+              anyOf:
+              - $ref: '#/components/schemas/StatementCalculationNode'
+              - type: 'null'
+        required:
+        - operation
+        - metric
+        - value
+        - currency
+        - period_start
+        - report_period
+        - available_at
+        - inputs
+        additionalProperties: false
+    PublicCashFlowStatementsItem:
+      type: object
+      properties:
+        ticker:
+          type: string
+        market:
+          type: string
+          enum:
+          - US
+          - CN
+          - JP
+        fiscal_year:
+          type: integer
+        period:
+          type: string
+          enum:
+          - FY
+          - Q1
+          - Q2
+          - Q3
+          - Q4
+        period_start:
+          type: string
+          format: date
+        report_period:
+          type: string
+          format: date
+        currency:
+          type: string
+        accounting_standard:
+          type: string
+        accession_number:
+          type: string
+        form_type:
+          type: string
+        filing_url:
+          type: string
+          format: uri
+        filing_date:
+          type: string
+          format: date
+        derived_fields:
+          type: array
+          items:
+            type: string
+        derivation:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/StatementCalculationNode'
+        operating_cash_flow:
+          type: number
+        change_in_working_capital:
+          anyOf:
+          - type: number
+          - type: 'null'
+        capital_expenditures:
+          anyOf:
+          - type: number
+          - type: 'null'
+        acquisitions_net:
+          anyOf:
+          - type: number
+          - type: 'null'
+        purchases_of_investments:
+          anyOf:
+          - type: number
+          - type: 'null'
+        proceeds_from_investments:
+          anyOf:
+          - type: number
+          - type: 'null'
+        investing_cash_flow:
+          type: number
+        share_repurchases:
+          anyOf:
+          - type: number
+          - type: 'null'
+        dividends_paid:
+          type: number
+        financing_cash_flow:
+          type: number
+        effect_of_exchange_rate_on_cash:
+          anyOf:
+          - type: number
+          - type: 'null'
+        net_change_in_cash:
+          type: number
+        cash_at_end_of_period:
+          type: number
+        income_taxes_paid:
+          type: number
+        interest_paid:
+          anyOf:
+          - type: number
+          - type: 'null'
+        free_cash_flow:
+          anyOf:
+          - type: number
+          - type: 'null'
+      required:
+      - ticker
+      - market
+      - fiscal_year
+      - period
+      - period_start
+      - report_period
+      - currency
+      - accounting_standard
+      - accession_number
+      - form_type
+      - filing_url
+      - filing_date
+      - derived_fields
+      - derivation
+      - operating_cash_flow
+      - change_in_working_capital
+      - capital_expenditures
+      - acquisitions_net
+      - purchases_of_investments
+      - proceeds_from_investments
+      - investing_cash_flow
+      - share_repurchases
+      - dividends_paid
+      - financing_cash_flow
+      - effect_of_exchange_rate_on_cash
+      - net_change_in_cash
+      - cash_at_end_of_period
+      - income_taxes_paid
+      - interest_paid
+      - free_cash_flow
       additionalProperties: false
     PublicBalanceSheetsItem:
       type: object
@@ -1644,6 +1634,16 @@ components:
       - total_debt
       - net_debt
       additionalProperties: false
+    PublicDataError:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+      required:
+      - error
+      - message
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

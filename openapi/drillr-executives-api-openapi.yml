@@ -281,16 +281,6 @@ components:
       - filing_url
       - filing_date
       additionalProperties: false
-    PublicDataError:
-      type: object
-      properties:
-        error:
-          type: string
-        message:
-          type: string
-      required:
-      - error
-      - message
     PublicExecutivesItem:
       type: object
       properties:
@@ -337,6 +327,16 @@ components:
       - filing_url
       - filing_date
       additionalProperties: false
+    PublicDataError:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+      required:
+      - error
+      - message
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

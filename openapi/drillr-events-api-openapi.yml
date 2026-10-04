@@ -980,564 +980,6 @@ paths:
                 $ref: '#/components/schemas/PublicDataError'
 components:
   schemas:
-    PublicEventsFinancingsItem:
-      type: object
-      properties:
-        event_id:
-          type: string
-        ticker:
-          type: string
-        market:
-          type: string
-          enum:
-          - US
-        event_class:
-          type: string
-          enum:
-          - capital
-        event_type:
-          type: string
-          enum:
-          - equity_issuance
-          - debt_issuance
-          - convertible
-          - guarantee
-          - debt_default
-        axis:
-          type: object
-          properties:
-            instrument:
-              type: string
-              enum:
-              - public_offering
-              - private_placement
-              - rights_issue
-              - pipe
-              - atm
-              - bond
-              - note
-              - term_loan
-              - revolver
-              - loan
-              - cb
-              - bw
-              - exchangeable
-              - convertible_preferred
-            action:
-              type: string
-              enum:
-              - new
-              - amend
-              - drawdown
-              - repay
-              - cancel
-              - release
-              - announce
-              - execute
-              - cancel_shares
-              - appointment
-              - departure
-              - role_change
-              - pledge
-              - supplement
-              - freeze
-              - unfreeze
-              - initiate
-              - raise
-              - lower
-              - withdraw
-              - halt
-              - resume
-            subtype:
-              type: string
-              enum:
-              - regular
-              - special
-              - interim
-              - in_kind
-              - dual_class_setup
-              - full_circulation
-              - par_value_change
-              - rights_amendment
-              - business_restructuring
-              - internal_reorg
-              - investigation
-              - penalty
-              - warning
-              - rectification
-              - risk_warning
-              - forced
-              - voluntary
-              - petition
-              - reorganization
-              - liquidation
-              - receivership
-            source:
-              type: string
-              enum:
-              - retained_earnings
-              - capital_reserve
-            consideration_type:
-              type: string
-              enum:
-              - all_cash
-              - all_stock
-              - mixed
-              - debt_assumption
-              - nil
-            structure:
-              type: string
-              enum:
-              - share_deal
-              - asset_deal
-              - tender_offer
-              - scheme_of_arrangement
-            mechanism:
-              type: string
-              enum:
-              - equity_transfer
-              - inheritance
-              - concert_agreement
-              - other
-            role_type:
-              type: string
-              enum:
-              - ceo
-              - cfo
-              - coo
-              - chair
-              - director
-              - other
-            reason:
-              type: string
-              enum:
-              - resignation
-              - retirement
-              - termination
-              - death
-              - other
-            direction:
-              type: string
-              enum:
-              - increase
-              - decrease
-              - down
-              - up
-            intent:
-              type: string
-              enum:
-              - active
-              - passive
-            share_source:
-              type: string
-              enum:
-              - ipo
-              - private_placement
-              - equity_incentive
-            party_role:
-              type: string
-              enum:
-              - plaintiff
-              - defendant
-              - other
-            proceeding:
-              type: string
-              enum:
-              - civil
-              - criminal
-              - arbitration
-          additionalProperties: false
-        source_category:
-          type: string
-        event_date:
-          type: string
-          format: date
-        title:
-          type: string
-        stage:
-          type: string
-          enum:
-          - announced
-          - approved
-          - amended
-          - completed
-          - terminated
-        event_group_id:
-          type: string
-        is_current:
-          type: boolean
-        accession_number:
-          type: string
-        form_type:
-          type: string
-        filing_url:
-          type: string
-          format: uri
-        filing_date:
-          type: string
-          format: date
-        instrument:
-          anyOf:
-          - type: string
-          - type: 'null'
-        action:
-          anyOf:
-          - type: string
-          - type: 'null'
-        amount:
-          anyOf:
-          - type: number
-          - type: 'null'
-        currency:
-          anyOf:
-          - type: string
-          - type: 'null'
-        counterparty_names:
-          type: array
-          items:
-            type: string
-        use_of_proceeds:
-          anyOf:
-          - type: string
-          - type: 'null'
-        closing_date:
-          anyOf:
-          - type: string
-            format: date
-          - type: 'null'
-        interest_rate:
-          anyOf:
-          - type: number
-          - type: 'null'
-        maturity_date:
-          anyOf:
-          - type: string
-            format: date
-          - type: 'null'
-        is_secured:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-        covenants:
-          type: array
-          items:
-            type: string
-        shares:
-          anyOf:
-          - type: number
-          - type: 'null'
-        price_per_share:
-          anyOf:
-          - type: number
-          - type: 'null'
-        discount_pct:
-          anyOf:
-          - type: number
-          - type: 'null'
-        exemption:
-          anyOf:
-          - type: string
-          - type: 'null'
-        registration_rights:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-        lock_up_period:
-          anyOf:
-          - type: string
-          - type: 'null'
-        conversion_price:
-          anyOf:
-          - type: number
-          - type: 'null'
-        conversion_ratio:
-          anyOf:
-          - type: number
-          - type: 'null'
-      required:
-      - event_id
-      - ticker
-      - market
-      - event_class
-      - event_type
-      - axis
-      - source_category
-      - event_date
-      - title
-      - stage
-      - event_group_id
-      - is_current
-      - accession_number
-      - form_type
-      - filing_url
-      - filing_date
-      - instrument
-      - action
-      - amount
-      - currency
-      - counterparty_names
-      - use_of_proceeds
-      - closing_date
-      - interest_rate
-      - maturity_date
-      - is_secured
-      - covenants
-      - shares
-      - price_per_share
-      - discount_pct
-      - exemption
-      - registration_rights
-      - lock_up_period
-      - conversion_price
-      - conversion_ratio
-      additionalProperties: false
-    PublicEventsItem:
-      type: object
-      properties:
-        event_id:
-          type: string
-        ticker:
-          type: string
-        market:
-          type: string
-          enum:
-          - US
-        event_class:
-          type: string
-          enum:
-          - capital
-          - distribution
-          - share_structure
-          - transaction
-          - agreement
-          - governance
-          - ownership
-          - legal_regulatory
-        event_type:
-          type: string
-          enum:
-          - equity_issuance
-          - debt_issuance
-          - convertible
-          - guarantee
-          - debt_default
-          - dividend
-          - buyback
-          - capital_reduction
-          - stock_split
-          - reverse_split
-          - bonus_issue
-          - share_class_change
-          - acquisition
-          - disposal
-          - merger
-          - spin_off
-          - joint_venture
-          - strategic_investment
-          - restructuring
-          - license
-          - supply
-          - partnership
-          - major_contract
-          - settlement
-          - executive_change
-          - director_change
-          - auditor_change
-          - equity_incentive
-          - stake_change
-          - delisting
-          - bankruptcy
-        axis:
-          type: object
-          properties:
-            instrument:
-              type: string
-              enum:
-              - public_offering
-              - private_placement
-              - rights_issue
-              - pipe
-              - atm
-              - bond
-              - note
-              - term_loan
-              - revolver
-              - loan
-              - cb
-              - bw
-              - exchangeable
-              - convertible_preferred
-            action:
-              type: string
-              enum:
-              - new
-              - amend
-              - drawdown
-              - repay
-              - cancel
-              - release
-              - announce
-              - execute
-              - cancel_shares
-              - appointment
-              - departure
-              - role_change
-              - pledge
-              - supplement
-              - freeze
-              - unfreeze
-              - initiate
-              - raise
-              - lower
-              - withdraw
-              - halt
-              - resume
-            subtype:
-              type: string
-              enum:
-              - regular
-              - special
-              - interim
-              - in_kind
-              - dual_class_setup
-              - full_circulation
-              - par_value_change
-              - rights_amendment
-              - business_restructuring
-              - internal_reorg
-              - investigation
-              - penalty
-              - warning
-              - rectification
-              - risk_warning
-              - forced
-              - voluntary
-              - petition
-              - reorganization
-              - liquidation
-              - receivership
-            source:
-              type: string
-              enum:
-              - retained_earnings
-              - capital_reserve
-            consideration_type:
-              type: string
-              enum:
-              - all_cash
-              - all_stock
-              - mixed
-              - debt_assumption
-              - nil
-            structure:
-              type: string
-              enum:
-              - share_deal
-              - asset_deal
-              - tender_offer
-              - scheme_of_arrangement
-            mechanism:
-              type: string
-              enum:
-              - equity_transfer
-              - inheritance
-              - concert_agreement
-              - other
-            role_type:
-              type: string
-              enum:
-              - ceo
-              - cfo
-              - coo
-              - chair
-              - director
-              - other
-            reason:
-              type: string
-              enum:
-              - resignation
-              - retirement
-              - termination
-              - death
-              - other
-            direction:
-              type: string
-              enum:
-              - increase
-              - decrease
-              - down
-              - up
-            intent:
-              type: string
-              enum:
-              - active
-              - passive
-            share_source:
-              type: string
-              enum:
-              - ipo
-              - private_placement
-              - equity_incentive
-            party_role:
-              type: string
-              enum:
-              - plaintiff
-              - defendant
-              - other
-            proceeding:
-              type: string
-              enum:
-              - civil
-              - criminal
-              - arbitration
-          additionalProperties: false
-        source_category:
-          type: string
-        event_date:
-          type: string
-          format: date
-        title:
-          type: string
-        stage:
-          type: string
-          enum:
-          - announced
-          - approved
-          - amended
-          - completed
-          - terminated
-        event_group_id:
-          type: string
-        is_current:
-          type: boolean
-        accession_number:
-          type: string
-        form_type:
-          type: string
-        filing_url:
-          type: string
-          format: uri
-        filing_date:
-          type: string
-          format: date
-      required:
-      - event_id
-      - ticker
-      - market
-      - event_class
-      - event_type
-      - axis
-      - source_category
-      - event_date
-      - title
-      - stage
-      - event_group_id
-      - is_current
-      - accession_number
-      - form_type
-      - filing_url
-      - filing_date
-      additionalProperties: false
     PublicEventsCorporateActionsItem:
       type: object
       properties:
@@ -1803,257 +1245,6 @@ components:
       - shares_affected
       - amount_total
       additionalProperties: false
-    PublicEventsOwnershipItem:
-      type: object
-      properties:
-        event_id:
-          type: string
-        ticker:
-          type: string
-        market:
-          type: string
-          enum:
-          - US
-        event_class:
-          type: string
-          enum:
-          - ownership
-        event_type:
-          type: string
-          enum:
-          - stake_change
-        axis:
-          type: object
-          properties:
-            instrument:
-              type: string
-              enum:
-              - public_offering
-              - private_placement
-              - rights_issue
-              - pipe
-              - atm
-              - bond
-              - note
-              - term_loan
-              - revolver
-              - loan
-              - cb
-              - bw
-              - exchangeable
-              - convertible_preferred
-            action:
-              type: string
-              enum:
-              - new
-              - amend
-              - drawdown
-              - repay
-              - cancel
-              - release
-              - announce
-              - execute
-              - cancel_shares
-              - appointment
-              - departure
-              - role_change
-              - pledge
-              - supplement
-              - freeze
-              - unfreeze
-              - initiate
-              - raise
-              - lower
-              - withdraw
-              - halt
-              - resume
-            subtype:
-              type: string
-              enum:
-              - regular
-              - special
-              - interim
-              - in_kind
-              - dual_class_setup
-              - full_circulation
-              - par_value_change
-              - rights_amendment
-              - business_restructuring
-              - internal_reorg
-              - investigation
-              - penalty
-              - warning
-              - rectification
-              - risk_warning
-              - forced
-              - voluntary
-              - petition
-              - reorganization
-              - liquidation
-              - receivership
-            source:
-              type: string
-              enum:
-              - retained_earnings
-              - capital_reserve
-            consideration_type:
-              type: string
-              enum:
-              - all_cash
-              - all_stock
-              - mixed
-              - debt_assumption
-              - nil
-            structure:
-              type: string
-              enum:
-              - share_deal
-              - asset_deal
-              - tender_offer
-              - scheme_of_arrangement
-            mechanism:
-              type: string
-              enum:
-              - equity_transfer
-              - inheritance
-              - concert_agreement
-              - other
-            role_type:
-              type: string
-              enum:
-              - ceo
-              - cfo
-              - coo
-              - chair
-              - director
-              - other
-            reason:
-              type: string
-              enum:
-              - resignation
-              - retirement
-              - termination
-              - death
-              - other
-            direction:
-              type: string
-              enum:
-              - increase
-              - decrease
-              - down
-              - up
-            intent:
-              type: string
-              enum:
-              - active
-              - passive
-            share_source:
-              type: string
-              enum:
-              - ipo
-              - private_placement
-              - equity_incentive
-            party_role:
-              type: string
-              enum:
-              - plaintiff
-              - defendant
-              - other
-            proceeding:
-              type: string
-              enum:
-              - civil
-              - criminal
-              - arbitration
-          additionalProperties: false
-        source_category:
-          type: string
-        event_date:
-          type: string
-          format: date
-        title:
-          type: string
-        stage:
-          type: string
-          enum:
-          - completed
-          - amended
-        event_group_id:
-          type: string
-        is_current:
-          type: boolean
-        accession_number:
-          type: string
-        form_type:
-          type: string
-        filing_url:
-          type: string
-          format: uri
-        filing_date:
-          type: string
-          format: date
-        holder_name:
-          type: string
-        pct_before:
-          anyOf:
-          - type: number
-          - type: 'null'
-        pct_after:
-          anyOf:
-          - type: number
-          - type: 'null'
-        threshold_pct:
-          type: number
-        shares_after:
-          anyOf:
-          - type: number
-          - type: 'null'
-        shares_changed:
-          anyOf:
-          - type: number
-          - type: 'null'
-        direction:
-          anyOf:
-          - type: string
-          - type: 'null'
-        intent:
-          type: string
-      required:
-      - event_id
-      - ticker
-      - market
-      - event_class
-      - event_type
-      - axis
-      - source_category
-      - event_date
-      - title
-      - stage
-      - event_group_id
-      - is_current
-      - accession_number
-      - form_type
-      - filing_url
-      - filing_date
-      - holder_name
-      - pct_before
-      - pct_after
-      - threshold_pct
-      - shares_after
-      - shares_changed
-      - direction
-      - intent
-      additionalProperties: false
-    PublicDataError:
-      type: object
-      properties:
-        error:
-          type: string
-        message:
-          type: string
-      required:
-      - error
-      - message
     PublicEventsDealsItem:
       type: object
       properties:
@@ -2613,6 +1804,815 @@ components:
       - successor_name
       - is_interim
       additionalProperties: false
+    PublicEventsItem:
+      type: object
+      properties:
+        event_id:
+          type: string
+        ticker:
+          type: string
+        market:
+          type: string
+          enum:
+          - US
+        event_class:
+          type: string
+          enum:
+          - capital
+          - distribution
+          - share_structure
+          - transaction
+          - agreement
+          - governance
+          - ownership
+          - legal_regulatory
+        event_type:
+          type: string
+          enum:
+          - equity_issuance
+          - debt_issuance
+          - convertible
+          - guarantee
+          - debt_default
+          - dividend
+          - buyback
+          - capital_reduction
+          - stock_split
+          - reverse_split
+          - bonus_issue
+          - share_class_change
+          - acquisition
+          - disposal
+          - merger
+          - spin_off
+          - joint_venture
+          - strategic_investment
+          - restructuring
+          - license
+          - supply
+          - partnership
+          - major_contract
+          - settlement
+          - executive_change
+          - director_change
+          - auditor_change
+          - equity_incentive
+          - stake_change
+          - delisting
+          - bankruptcy
+        axis:
+          type: object
+          properties:
+            instrument:
+              type: string
+              enum:
+              - public_offering
+              - private_placement
+              - rights_issue
+              - pipe
+              - atm
+              - bond
+              - note
+              - term_loan
+              - revolver
+              - loan
+              - cb
+              - bw
+              - exchangeable
+              - convertible_preferred
+            action:
+              type: string
+              enum:
+              - new
+              - amend
+              - drawdown
+              - repay
+              - cancel
+              - release
+              - announce
+              - execute
+              - cancel_shares
+              - appointment
+              - departure
+              - role_change
+              - pledge
+              - supplement
+              - freeze
+              - unfreeze
+              - initiate
+              - raise
+              - lower
+              - withdraw
+              - halt
+              - resume
+            subtype:
+              type: string
+              enum:
+              - regular
+              - special
+              - interim
+              - in_kind
+              - dual_class_setup
+              - full_circulation
+              - par_value_change
+              - rights_amendment
+              - business_restructuring
+              - internal_reorg
+              - investigation
+              - penalty
+              - warning
+              - rectification
+              - risk_warning
+              - forced
+              - voluntary
+              - petition
+              - reorganization
+              - liquidation
+              - receivership
+            source:
+              type: string
+              enum:
+              - retained_earnings
+              - capital_reserve
+            consideration_type:
+              type: string
+              enum:
+              - all_cash
+              - all_stock
+              - mixed
+              - debt_assumption
+              - nil
+            structure:
+              type: string
+              enum:
+              - share_deal
+              - asset_deal
+              - tender_offer
+              - scheme_of_arrangement
+            mechanism:
+              type: string
+              enum:
+              - equity_transfer
+              - inheritance
+              - concert_agreement
+              - other
+            role_type:
+              type: string
+              enum:
+              - ceo
+              - cfo
+              - coo
+              - chair
+              - director
+              - other
+            reason:
+              type: string
+              enum:
+              - resignation
+              - retirement
+              - termination
+              - death
+              - other
+            direction:
+              type: string
+              enum:
+              - increase
+              - decrease
+              - down
+              - up
+            intent:
+              type: string
+              enum:
+              - active
+              - passive
+            share_source:
+              type: string
+              enum:
+              - ipo
+              - private_placement
+              - equity_incentive
+            party_role:
+              type: string
+              enum:
+              - plaintiff
+              - defendant
+              - other
+            proceeding:
+              type: string
+              enum:
+              - civil
+              - criminal
+              - arbitration
+          additionalProperties: false
+        source_category:
+          type: string
+        event_date:
+          type: string
+          format: date
+        title:
+          type: string
+        stage:
+          type: string
+          enum:
+          - announced
+          - approved
+          - amended
+          - completed
+          - terminated
+        event_group_id:
+          type: string
+        is_current:
+          type: boolean
+        accession_number:
+          type: string
+        form_type:
+          type: string
+        filing_url:
+          type: string
+          format: uri
+        filing_date:
+          type: string
+          format: date
+      required:
+      - event_id
+      - ticker
+      - market
+      - event_class
+      - event_type
+      - axis
+      - source_category
+      - event_date
+      - title
+      - stage
+      - event_group_id
+      - is_current
+      - accession_number
+      - form_type
+      - filing_url
+      - filing_date
+      additionalProperties: false
+    PublicEventsFinancingsItem:
+      type: object
+      properties:
+        event_id:
+          type: string
+        ticker:
+          type: string
+        market:
+          type: string
+          enum:
+          - US
+        event_class:
+          type: string
+          enum:
+          - capital
+        event_type:
+          type: string
+          enum:
+          - equity_issuance
+          - debt_issuance
+          - convertible
+          - guarantee
+          - debt_default
+        axis:
+          type: object
+          properties:
+            instrument:
+              type: string
+              enum:
+              - public_offering
+              - private_placement
+              - rights_issue
+              - pipe
+              - atm
+              - bond
+              - note
+              - term_loan
+              - revolver
+              - loan
+              - cb
+              - bw
+              - exchangeable
+              - convertible_preferred
+            action:
+              type: string
+              enum:
+              - new
+              - amend
+              - drawdown
+              - repay
+              - cancel
+              - release
+              - announce
+              - execute
+              - cancel_shares
+              - appointment
+              - departure
+              - role_change
+              - pledge
+              - supplement
+              - freeze
+              - unfreeze
+              - initiate
+              - raise
+              - lower
+              - withdraw
+              - halt
+              - resume
+            subtype:
+              type: string
+              enum:
+              - regular
+              - special
+              - interim
+              - in_kind
+              - dual_class_setup
+              - full_circulation
+              - par_value_change
+              - rights_amendment
+              - business_restructuring
+              - internal_reorg
+              - investigation
+              - penalty
+              - warning
+              - rectification
+              - risk_warning
+              - forced
+              - voluntary
+              - petition
+              - reorganization
+              - liquidation
+              - receivership
+            source:
+              type: string
+              enum:
+              - retained_earnings
+              - capital_reserve
+            consideration_type:
+              type: string
+              enum:
+              - all_cash
+              - all_stock
+              - mixed
+              - debt_assumption
+              - nil
+            structure:
+              type: string
+              enum:
+              - share_deal
+              - asset_deal
+              - tender_offer
+              - scheme_of_arrangement
+            mechanism:
+              type: string
+              enum:
+              - equity_transfer
+              - inheritance
+              - concert_agreement
+              - other
+            role_type:
+              type: string
+              enum:
+              - ceo
+              - cfo
+              - coo
+              - chair
+              - director
+              - other
+            reason:
+              type: string
+              enum:
+              - resignation
+              - retirement
+              - termination
+              - death
+              - other
+            direction:
+              type: string
+              enum:
+              - increase
+              - decrease
+              - down
+              - up
+            intent:
+              type: string
+              enum:
+              - active
+              - passive
+            share_source:
+              type: string
+              enum:
+              - ipo
+              - private_placement
+              - equity_incentive
+            party_role:
+              type: string
+              enum:
+              - plaintiff
+              - defendant
+              - other
+            proceeding:
+              type: string
+              enum:
+              - civil
+              - criminal
+              - arbitration
+          additionalProperties: false
+        source_category:
+          type: string
+        event_date:
+          type: string
+          format: date
+        title:
+          type: string
+        stage:
+          type: string
+          enum:
+          - announced
+          - approved
+          - amended
+          - completed
+          - terminated
+        event_group_id:
+          type: string
+        is_current:
+          type: boolean
+        accession_number:
+          type: string
+        form_type:
+          type: string
+        filing_url:
+          type: string
+          format: uri
+        filing_date:
+          type: string
+          format: date
+        instrument:
+          anyOf:
+          - type: string
+          - type: 'null'
+        action:
+          anyOf:
+          - type: string
+          - type: 'null'
+        amount:
+          anyOf:
+          - type: number
+          - type: 'null'
+        currency:
+          anyOf:
+          - type: string
+          - type: 'null'
+        counterparty_names:
+          type: array
+          items:
+            type: string
+        use_of_proceeds:
+          anyOf:
+          - type: string
+          - type: 'null'
+        closing_date:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+        interest_rate:
+          anyOf:
+          - type: number
+          - type: 'null'
+        maturity_date:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+        is_secured:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+        covenants:
+          type: array
+          items:
+            type: string
+        shares:
+          anyOf:
+          - type: number
+          - type: 'null'
+        price_per_share:
+          anyOf:
+          - type: number
+          - type: 'null'
+        discount_pct:
+          anyOf:
+          - type: number
+          - type: 'null'
+        exemption:
+          anyOf:
+          - type: string
+          - type: 'null'
+        registration_rights:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+        lock_up_period:
+          anyOf:
+          - type: string
+          - type: 'null'
+        conversion_price:
+          anyOf:
+          - type: number
+          - type: 'null'
+        conversion_ratio:
+          anyOf:
+          - type: number
+          - type: 'null'
+      required:
+      - event_id
+      - ticker
+      - market
+      - event_class
+      - event_type
+      - axis
+      - source_category
+      - event_date
+      - title
+      - stage
+      - event_group_id
+      - is_current
+      - accession_number
+      - form_type
+      - filing_url
+      - filing_date
+      - instrument
+      - action
+      - amount
+      - currency
+      - counterparty_names
+      - use_of_proceeds
+      - closing_date
+      - interest_rate
+      - maturity_date
+      - is_secured
+      - covenants
+      - shares
+      - price_per_share
+      - discount_pct
+      - exemption
+      - registration_rights
+      - lock_up_period
+      - conversion_price
+      - conversion_ratio
+      additionalProperties: false
+    PublicEventsOwnershipItem:
+      type: object
+      properties:
+        event_id:
+          type: string
+        ticker:
+          type: string
+        market:
+          type: string
+          enum:
+          - US
+        event_class:
+          type: string
+          enum:
+          - ownership
+        event_type:
+          type: string
+          enum:
+          - stake_change
+        axis:
+          type: object
+          properties:
+            instrument:
+              type: string
+              enum:
+              - public_offering
+              - private_placement
+              - rights_issue
+              - pipe
+              - atm
+              - bond
+              - note
+              - term_loan
+              - revolver
+              - loan
+              - cb
+              - bw
+              - exchangeable
+              - convertible_preferred
+            action:
+              type: string
+              enum:
+              - new
+              - amend
+              - drawdown
+              - repay
+              - cancel
+              - release
+              - announce
+              - execute
+              - cancel_shares
+              - appointment
+              - departure
+              - role_change
+              - pledge
+              - supplement
+              - freeze
+              - unfreeze
+              - initiate
+              - raise
+              - lower
+              - withdraw
+              - halt
+              - resume
+            subtype:
+              type: string
+              enum:
+              - regular
+              - special
+              - interim
+              - in_kind
+              - dual_class_setup
+              - full_circulation
+              - par_value_change
+              - rights_amendment
+              - business_restructuring
+              - internal_reorg
+              - investigation
+              - penalty
+              - warning
+              - rectification
+              - risk_warning
+              - forced
+              - voluntary
+              - petition
+              - reorganization
+              - liquidation
+              - receivership
+            source:
+              type: string
+              enum:
+              - retained_earnings
+              - capital_reserve
+            consideration_type:
+              type: string
+              enum:
+              - all_cash
+              - all_stock
+              - mixed
+              - debt_assumption
+              - nil
+            structure:
+              type: string
+              enum:
+              - share_deal
+              - asset_deal
+              - tender_offer
+              - scheme_of_arrangement
+            mechanism:
+              type: string
+              enum:
+              - equity_transfer
+              - inheritance
+              - concert_agreement
+              - other
+            role_type:
+              type: string
+              enum:
+              - ceo
+              - cfo
+              - coo
+              - chair
+              - director
+              - other
+            reason:
+              type: string
+              enum:
+              - resignation
+              - retirement
+              - termination
+              - death
+              - other
+            direction:
+              type: string
+              enum:
+              - increase
+              - decrease
+              - down
+              - up
+            intent:
+              type: string
+              enum:
+              - active
+              - passive
+            share_source:
+              type: string
+              enum:
+              - ipo
+              - private_placement
+              - equity_incentive
+            party_role:
+              type: string
+              enum:
+              - plaintiff
+              - defendant
+              - other
+            proceeding:
+              type: string
+              enum:
+              - civil
+              - criminal
+              - arbitration
+          additionalProperties: false
+        source_category:
+          type: string
+        event_date:
+          type: string
+          format: date
+        title:
+          type: string
+        stage:
+          type: string
+          enum:
+          - completed
+          - amended
+        event_group_id:
+          type: string
+        is_current:
+          type: boolean
+        accession_number:
+          type: string
+        form_type:
+          type: string
+        filing_url:
+          type: string
+          format: uri
+        filing_date:
+          type: string
+          format: date
+        holder_name:
+          type: string
+        pct_before:
+          anyOf:
+          - type: number
+          - type: 'null'
+        pct_after:
+          anyOf:
+          - type: number
+          - type: 'null'
+        threshold_pct:
+          type: number
+        shares_after:
+          anyOf:
+          - type: number
+          - type: 'null'
+        shares_changed:
+          anyOf:
+          - type: number
+          - type: 'null'
+        direction:
+          anyOf:
+          - type: string
+          - type: 'null'
+        intent:
+          type: string
+      required:
+      - event_id
+      - ticker
+      - market
+      - event_class
+      - event_type
+      - axis
+      - source_category
+      - event_date
+      - title
+      - stage
+      - event_group_id
+      - is_current
+      - accession_number
+      - form_type
+      - filing_url
+      - filing_date
+      - holder_name
+      - pct_before
+      - pct_after
+      - threshold_pct
+      - shares_after
+      - shares_changed
+      - direction
+      - intent
+      additionalProperties: false
+    PublicDataError:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+      required:
+      - error
+      - message
   securitySchemes:
     ApiKeyAuth:
       type: apiKey
