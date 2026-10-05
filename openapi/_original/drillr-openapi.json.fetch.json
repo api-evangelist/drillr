@@ -1,0 +1,12 @@
+{
+ "url": "https://gateway.drillr.ai/api/v2/openapi.json",
+ "requested_url": "https://gateway.drillr.ai/openapi.json",
+ "status": 200,
+ "content_type": "application/json; charset=UTF-8",
+ "bytes": 146522,
+ "sha256": "6f72b2e9c46fa057db60cd908d47e113cd6493375f5476f2f3bbe3ba6a802f64",
+ "fetched_at": "2026-10-04",
+ "fetched_by": "APIEvangelist-Harvest/1.0 (+https://apievangelist.com)",
+ "match": "equivalent",
+ "note": "Re-fetched from the provider by verify-openapi-sources.py; the provider's current document describes the same operations (Jaccard 1.0), but the bytes differ, so the archive is an earlier or reformatted copy."
+}
