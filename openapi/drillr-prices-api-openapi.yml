@@ -228,6 +228,21 @@ paths:
                 $ref: '#/components/schemas/PublicDataError'
 components:
   schemas:
+    PublicPricesSnapshotItem:
+      type: object
+      properties:
+        ticker:
+          type: string
+        date:
+          type: string
+          format: date
+        price:
+          type: number
+      required:
+      - ticker
+      - date
+      - price
+      additionalProperties: false
     PublicPricesHistoricalItem:
       type: object
       properties:
@@ -251,21 +266,6 @@ components:
       - high
       - low
       - close
-      additionalProperties: false
-    PublicPricesSnapshotItem:
-      type: object
-      properties:
-        ticker:
-          type: string
-        date:
-          type: string
-          format: date
-        price:
-          type: number
-      required:
-      - ticker
-      - date
-      - price
       additionalProperties: false
     PublicDataError:
       type: object

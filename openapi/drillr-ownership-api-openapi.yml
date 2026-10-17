@@ -333,49 +333,6 @@ paths:
                 $ref: '#/components/schemas/PublicDataError'
 components:
   schemas:
-    PublicInstitutionalHoldingsItem:
-      type: object
-      properties:
-        ticker:
-          anyOf:
-          - type: string
-          - type: 'null'
-        investor_name:
-          type: string
-        investor_cik:
-          type: string
-        report_period:
-          type: string
-          format: date
-        shares:
-          type: number
-        market_value:
-          type: number
-        change_in_shares:
-          type: number
-        accession_number:
-          type: string
-        form_type:
-          type: string
-        filing_url:
-          type: string
-          format: uri
-        filing_date:
-          type: string
-          format: date
-      required:
-      - ticker
-      - investor_name
-      - investor_cik
-      - report_period
-      - shares
-      - market_value
-      - change_in_shares
-      - accession_number
-      - form_type
-      - filing_url
-      - filing_date
-      additionalProperties: false
     PublicInsiderTradesItem:
       type: object
       properties:
@@ -464,6 +421,49 @@ components:
       - is_amendment
       - original_filing_date
       - accession_number
+      - filing_url
+      - filing_date
+      additionalProperties: false
+    PublicInstitutionalHoldingsItem:
+      type: object
+      properties:
+        ticker:
+          anyOf:
+          - type: string
+          - type: 'null'
+        investor_name:
+          type: string
+        investor_cik:
+          type: string
+        report_period:
+          type: string
+          format: date
+        shares:
+          type: number
+        market_value:
+          type: number
+        change_in_shares:
+          type: number
+        accession_number:
+          type: string
+        form_type:
+          type: string
+        filing_url:
+          type: string
+          format: uri
+        filing_date:
+          type: string
+          format: date
+      required:
+      - ticker
+      - investor_name
+      - investor_cik
+      - report_period
+      - shares
+      - market_value
+      - change_in_shares
+      - accession_number
+      - form_type
       - filing_url
       - filing_date
       additionalProperties: false
