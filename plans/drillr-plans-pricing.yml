@@ -1,0 +1,137 @@
+# Pricing transcribed from the provider's own page — see provenance. Numbers are quoted, not derived.
+generated: '2026-10-28'
+method: searched
+source: https://drillr.ai/pricing
+sources:
+- https://drillr.ai/pricing
+provenance:
+  tool: engine/economics/harvest_pricing.py
+  run: 20261028T161713
+  grounding: every price_text was found verbatim in the fetched page text
+audience: developer-api
+pricing_basis: per-call
+delivery:
+  delivery: managed
+  method: page
+  read: '2026-10-28'
+  managed_tier: Plus
+published: true
+note: Monthly/yearly toggle (Save 17%) shown; monthly prices captured. Per-tool credit rates listed in
+  FAQ (run_sql and filing tools 0.1 cr, news_search 0.2 cr, signal research tools 1 cr, company_search
+  3 cr).
+plan_count: 7
+currency: USD
+plans:
+- name: Free
+  price_text: $ 0
+  price: 0
+  currency: USD
+  period: month
+  included_quota: 80 credits, one-time; Company search · 20 / day; Unlimited API keys
+  overage: Top-ups at $0.15 / cr
+- name: Plus
+  price_text: $ 29 / month
+  price: 29
+  currency: USD
+  period: month
+  included_quota: 300 credits / month; Company search · 100 / day; Unlimited API keys; Community support
+  overage: $0.12 / cr top-ups (20% off)
+- name: Ultra
+  price_text: $ 99 / month
+  price: 99
+  currency: USD
+  period: month
+  included_quota: 1,500 credits / month; Company search · 500 / day; Unlimited API keys; Email support
+  overage: $0.10 / cr top-ups (33% off)
+- name: Enterprise
+  price_text: Custom
+  period: none
+  included_quota: Unlimited credits; custom limits; redistribution license; dedicated SLA
+  overage: Volume discount on credit rates
+- name: Small top-up
+  price_text: $15 (Free)
+  price: 15
+  currency: USD
+  period: one-time
+  unit: 100 credits
+  included_quota: 100 credits
+- name: Medium top-up
+  price_text: $75 (Free)
+  price: 75
+  currency: USD
+  period: one-time
+  unit: 500 credits
+  included_quota: 500 credits
+- name: Large top-up
+  price_text: $150 (Free)
+  price: 150
+  currency: USD
+  period: one-time
+  unit: 1,000 credits
+  included_quota: 1,000 credits
+rate_limit_statements:
+- Company search · 20 / day
+- Company search · 100 / day
+- Company search · 500 / day
+- Company search · custom limits
+x-canonical:
+  generated: '2026-11-01'
+  vocabulary: engine/economics/plans-canonical.yml
+  models:
+  - hybrid
+  - metered
+  units:
+  - credit
+  plans:
+  - name: Free
+    access: other
+    model: metered
+    model_how: derived
+    units: []
+    periods:
+    - month
+  - name: Plus
+    access: other
+    model: hybrid
+    model_how: derived
+    units: []
+    periods:
+    - month
+  - name: Ultra
+    access: other
+    model: hybrid
+    model_how: derived
+    units: []
+    periods:
+    - month
+  - name: Enterprise
+    access: other
+    model: metered
+    model_how: derived
+    units: []
+    periods:
+    - none
+  - name: Small top-up
+    access: other
+    model: hybrid
+    model_how: derived
+    units:
+    - credit
+    periods:
+    - one-time
+  - name: Medium top-up
+    access: other
+    model: hybrid
+    model_how: derived
+    units:
+    - credit
+    periods:
+    - one-time
+  - name: Large top-up
+    access: other
+    model: hybrid
+    model_how: derived
+    units:
+    - credit
+    periods:
+    - one-time
